@@ -27,6 +27,9 @@ fs
     );
   })
   .forEach(file => {
+    // console.log('Loading model file:', file);
+    // const required = require(path.join(__dirname, file));
+    // console.log('Exported type:', typeof required);
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
     db[model.name] = model;
   });
