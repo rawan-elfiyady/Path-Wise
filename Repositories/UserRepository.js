@@ -56,11 +56,29 @@ async function createUser(data) {
                                         role: data.role,
                                         });
 
-        return user;
+        const addedUser = await User.findOne({where: {email: data.email}});
+        return addedUser;
     } catch (error) {
         console.error("Error in createUser", error.message);
         throw error;
     }
+}
+
+async function updateUser(id, updatedFields) {
+  try {
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return { message: "User not found" };
+    }
+
+    await user.update(updatedFields);
+
+    return user;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
 }
 
 module.exports ={

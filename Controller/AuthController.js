@@ -5,21 +5,17 @@ const jwt = require("jsonwebtoken");
 
 const UserRepo = require("../Repositories/UserRepository");
 
+const AuthServices = require("../Services/AuthServices")
+
 router.post("/signUp", async (req, res, next) => {
     try{
         const {name, email, password} = req.body;
-    const existingUser = await UserRepo.getUserByEmail(email);
+        
+        const user = await AuthServices.signUp({name, email, password}); 
 
-    if(existingUser){
-        console.log("Checking for existing user with email:", email);
-        console.log("Existing user:", existingUser);
-        return res.status(400).json({message: "User already exist"});
-
-    }
-
-    const hashedPassword = await bcrypt.hash(password,8);
-    const data = {name, email, hashedPassword, role: "user"};
-    const user = await UserRepo.createUser(data);
+        if(!user){
+            return res.status(404).json({message: "User Already Exist"});
+        }
 
     return res.status(200).json(user);
 } catch(error){
@@ -30,35 +26,12 @@ router.post("/signUp", async (req, res, next) => {
 router.post("/login", async (req, res, next) => {
     try{
         const {email, password} = req.body;
-    const existingUser = await UserRepo.getUserByEmail(email);
+        const user = await AuthServices.login({email, password})
 
-    if(!existingUser){
-    return res.status(404).json({message: "User doesn`t exist"});
-    }
-
-    const match = await bcrypt.compare(password, existingUser.password);
-    if(!match){
-           return res.status(401).json({message: "Invalid Credentials"});
-    }
-
-    const token = jwt.sign({
-        id: existingUser.id,
-        email: existingUser.email,
-        role: existingUser.role
-    },
-    "secret",
-    {expiresIn: "1h"}
-);
-
-    return res.status(200).json({
-      token,
-      user: {
-        id: existingUser.id,
-        name: existingUser.name,
-        email: existingUser.email,
-        role: existingUser.role,
-      },
-    });
+        if(!user){
+            return res.status(404).json({message: "Not Found"});
+        }
+    return res.status(200).json(user);
 
 }catch(error){
     res.status(500).json(error.message);
