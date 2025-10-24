@@ -57,7 +57,7 @@ async function createUser(data) {
                                         });
 
         const addedUser = await User.findOne({where: {email: data.email}});
-        return addedUser;
+        return user;
     } catch (error) {
         console.error("Error in createUser", error.message);
         throw error;
@@ -80,6 +80,8 @@ async function updateUser(id, updatedFields) {
     throw error;
   }
 }
+
+
 
 module.exports ={
     getUserById,
