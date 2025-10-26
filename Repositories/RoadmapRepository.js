@@ -10,6 +10,21 @@ async function getRoadmapById(id) {
     return roadmap;
 }
 
+async function getRoadmapWithTopicsById(id) {
+    const roadmap = await db.Roadmap.findByPk(id, {
+  include: [
+    {
+      model: db.Topic,
+      as: "topics",
+    },
+  ]
+});
+
+ if(!roadmap) return null;
+    
+    return roadmap;
+}
+
 async function getRoadmapByName(name) {
     const roadmap = await Roadmap.findOne({where: {name: name}});
     
@@ -32,6 +47,30 @@ async function searchRoadmaps(search) {
     return roadmaps;
 }
 
+async function getTechnologiesRoadmaps() {
+    const roadmaps = await Roadmap.findAll({
+        where: {
+            entityType: "Technology",
+        }
+    });
+
+        if(!roadmaps) return null
+
+    return roadmaps;
+}
+
+async function getTracksRoadmaps(id) {
+    const roadmaps = await Roadmap.findAll({
+        where: {
+            entityType: "Track",
+        }
+    });
+ 
+        if(!roadmaps) return null
+
+    return roadmaps;
+}
+
 async function getAllRoadmaps() {
     const roadmaps = await Roadmap.findAll();
 
@@ -40,9 +79,6 @@ async function getAllRoadmaps() {
     return roadmaps;
 }
 
-// async function getTrackRoadmaps(id) {
-//     const roadmaps = await Roadmap
-// }
 
 async function updateRoadmap(id, name) {
     try {
