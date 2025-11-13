@@ -2,6 +2,8 @@ const db = require("../models");
 const {Sequelize, Roadmap, Topic, Source} = db;
 const { Op } = require("sequelize");
 
+
+
 async function getRoadmapById(id) {
     const roadmap = await Roadmap.findByPk(id);
 
