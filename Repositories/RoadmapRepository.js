@@ -2,7 +2,20 @@ const db = require("../models");
 const {Sequelize, Roadmap, Topic, Source} = db;
 const { Op } = require("sequelize");
 
+async function createRoadmap(data) {
+    try{
+        const roadmap = await Roadmap.create({
+        name: data.name,
+        entityType: data.entityType,
+        entityId: data.entityId
+      });
+      return roadmap;
 
+    } catch (error){
+        console.error("Error creating roudmap:", error);
+        throw new Error("Failed to create roudmap");
+   }
+}
 
 async function getRoadmapById(id) {
     const roadmap = await Roadmap.findByPk(id);
@@ -24,7 +37,7 @@ async function searchRoadmaps(search) {
     const roadmaps = await Roadmap.findAll({
         where: {
             name: {
-                [Op.iLike]: `%${search}`,
+                [Op.iLike]: `%${search}%`,
             },
         },
     });
@@ -42,9 +55,13 @@ async function getAllRoadmaps() {
     return roadmaps;
 }
 
-// async function getTrackRoadmaps(id) {
-//     const roadmaps = await Roadmap
-// }
+ async function getTrackRoadmaps(id) {
+    const roadmaps = await Roadmap.findAllById(id);
+
+    if(!roadmaps) return null;
+
+    return roadmaps;
+}
 
 async function updateRoadmap(id, name) {
     try {
@@ -62,3 +79,14 @@ async function deleteRoadmap(id) {
         console.error("error deleting roadmap: ", error)       
     }
 }
+
+module.exports = {
+    createRoadmap,
+    getAllRoadmaps,
+    getRoadmapById,
+    getRoadmapByName,
+    searchRoadmaps,
+    getTrackRoadmaps,
+    updateRoadmap,
+    deleteRoadmap
+};
