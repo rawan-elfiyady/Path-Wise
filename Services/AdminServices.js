@@ -1,6 +1,8 @@
 const RoadmapRepo = require ("../Repositories/RoadmapRepository");
 const TrackRepo = require ("../Repositories/TracksRepository");
 const TopicRepo = require ("../Repositories/TopicRepository");
+const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
+
 
 async function createRoadmap(Data) {
     try {
@@ -127,6 +129,47 @@ async function deleteTopic(id) {
     }
 }
 
+
+/////////////////////////Technology///////////////////////////
+
+
+async function createTechnology(Data) {
+    try {
+        const technology = await TechnologyRepo.createTechnology(Data);
+        return technology;
+    } catch (error) {
+        throw new Error(`Error creating technology: ${error.message}`);
+    }
+}
+
+async function getAllTechnologies() {
+    return await TechnologyRepo.getAllTechnologies();
+}
+
+async function getTechnologyById(id) {
+    return await TechnologyRepo.getTechnologyById(id);
+}
+
+/*async function getTechnologyByTrackId(trackId) {
+    return await TechnologyRepo.getTechnologyByTrackId(trackId);
+}*/
+
+async function getTechnologyByName(name) {
+    return await TechnologyRepo.getTechnologyByName(name);
+}
+
+async function updateTechnology(id, updates) {
+    return await TechnologyRepo.updateTechnology(id, updates);
+}
+
+async function deleteTechnology(id) {
+    try {
+        return await TechnologyRepo.deleteTechnology(id);
+    } catch (err) {
+        throw new Error(`Error deleting technology: ${err.message}`);
+    }
+}
+
 module.exports = {
     createRoadmap,
     getAllRoadmaps,
@@ -147,5 +190,12 @@ module.exports = {
     getTopicById,
     getTopicByName,
     updateTopic,
-    deleteTopic
+    deleteTopic,
+    createTechnology,
+    getAllTechnologies,
+    getTechnologyById,
+    getTechnologyByName,
+    
+    updateTechnology,
+    deleteTechnology
 };

@@ -202,6 +202,97 @@ router.get("/TrackByName", async (req, res, next) => {
     }
 });
 
+
+///////////////////////////////Topics//////////////////////////////////
+
+
+router.get("/Topics", async (req, res, next) => {
+    try {
+        const tpoics = await UserServices.getAllTracks();
+        res.status(200).json(topics);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Topic/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const topic = await UserServices.getTopicById(id);
+
+        res.status(200).json(topic);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/TopicByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const topic = await UserServices.getTopicByName(name);
+
+        res.status(200).json(topic);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+///////////////////////////////Tecknology//////////////////////////
+
+
+router.get("/Technologies", async (req, res, next) => {
+    try {
+        const technologies = await UserServices.getAllTechnologies();
+        res.status(200).json(technologies);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Technology/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const technology = await UserServices.getTechnologyById(id);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+/*router.get("/TechnologyTrack/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const technology = await UserServices.getTechnologyByTrackId(id);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});*/
+
+
+router.get("/TechnologyByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const technology = await UserServices.getTechnologyByName(name);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
 /////////////////////User///////////////////////////////////
 
 

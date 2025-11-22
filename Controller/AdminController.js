@@ -300,5 +300,105 @@ router.delete("/Topic/:id", async (req, res, next) => {
 });
 
 
+//////////////////////////Technology///////////////////////////
+
+router.post("/createTechnology", async (req, res, next) => {
+    try {
+        const { name, description, category, crashCourse } = req.body;
+        const technology = await AdminServices.createTopic({ name, description, category, crashCourse });
+
+        res.status(201).json({
+            message: "Technology created successfully",
+            data: technology
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Technologies", async (req, res, next) => {
+    try {
+        const technologies = await AdminServices.getAllTechnologies();
+        res.status(200).json(technologies);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET BY ID
+router.get("/Technology/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const technology = await AdminServices.getTechnologyById(id);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+/*router.get("/TechnologyTrackId/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const technology = await AdminServices.getTechnologyByTrackId(id);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});*/
+
+// GET BY NAME (use query param)
+router.get("/TechnologyByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const technology = await AdminServices.getTechnologyByName(name);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.put("/Technology/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updated = await AdminServices.updateTechnology(id, updates);
+
+        res.status(200).json({
+            message: "Technology updated successfully",
+            data: updated
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.delete("/Technology/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteTechnology(id);
+
+        res.status(200).json({
+            message: "Technology deleted successfully",
+            deleted
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
 
 module.exports = router;

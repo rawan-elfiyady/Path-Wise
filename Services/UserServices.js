@@ -1,7 +1,8 @@
 const RoadmapRepo = require ("../Repositories/RoadmapRepository");
 const SavedSkillRepo = require ("../Repositories/SavedSkillsRepository");
 const TrackRepo = require ("../Repositories/TracksRepository");
-
+const TopicRepo = require ("../Repositories/TopicRepository");
+const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
 
 ////////////////////////Roadmaps//////////////////////////
 
@@ -86,6 +87,41 @@ async function getTrackByName(name) {
     return await TrackRepo.getTrackByName(name);
 }
 
+
+///////////////////////////////Topics///////////////////////////////////////
+
+async function getAllTopics() {
+    return await TopicRepo.getAllTopics();
+}
+
+async function getTopicById(id) {
+    return await TopicRepo.getTopicById(id);
+}
+
+async function getTopicByName(name) {
+    return await TopicRepo.getTopicByName(name);
+
+}
+
+//////////////////////////////////Technology//////////////////////////
+
+
+async function getAllTechnologies() {
+    return await TechnologyRepo.getAllTechnologies();
+}
+
+async function getTechnologyById(id) {
+    return await TechnologyRepo.getTechnologyById(id);
+}
+
+async function getTechnologyByName(name) {
+    return await TechnologyRepo.getTechnologyByName(name);
+}
+
+/*async function getTechnologyByTrackId(trackId) {
+    return await TechnologyRepo.getTechnologyByTrackId(trackId);
+}*/
+
 module.exports = {
     getAllRoadmaps,
     getRoadmapById,
@@ -100,5 +136,12 @@ module.exports = {
     deleteSavedSkill,
     getAllTracks,
     getTrackById,
-    getTrackByName
-}
+    getTrackByName,
+    getAllTopics,
+    getTopicById,
+    getTopicByName,
+    getAllTechnologies,
+    getTechnologyById,
+    getTechnologyByName
+    
+};
