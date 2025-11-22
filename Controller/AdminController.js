@@ -1,0 +1,122 @@
+const express = require("express");
+const router = express.Router();
+const AdminServices = require("../Services/AdminServices");
+
+// CREATE ROADMAP
+router.post("/createRoadmap", async (req, res, next) => {
+    try {
+        const { name, entityType, entityId } = req.body;
+        const roadmap = await AdminServices.createRoadmap({ name, entityType, entityId });
+
+        res.status(201).json({
+            message: "Roadmap created successfully",
+            data: roadmap
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+// GET ALL ROADMAPS
+router.get("/roadmaps", async (req, res, next) => {
+    try {
+        const roadmaps = await AdminServices.getAllRoadmaps();
+        res.status(200).json(roadmaps);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET BY ID
+router.get("/roadmap/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const roadmap = await AdminServices.getRoadmapById(id);
+
+        res.status(200).json(roadmap);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET BY NAME (use query param)
+router.get("/roadmapByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const roadmap = await AdminServices.getRoadmapByName(name);
+
+        res.status(200).json(roadmap);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET ROADMAPS FOR A TRACK
+router.get("/trackRoadmaps/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const roadmaps = await AdminServices.getTrackRoadmaps(id);
+
+        res.status(200).json(roadmaps);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// SEARCH ROADMAPS
+router.get("/searchRoadmaps", async (req, res, next) => {
+    try {
+        const { search } = req.query;
+        const roadmaps = await AdminServices.searchRoadmaps(search);
+
+        res.status(200).json({
+            success: true,
+            count: roadmaps.length,
+            data: roadmaps
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// UPDATE ROADMAP
+router.put("/roadmap/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updated = await AdminServices.updateRoadmap(id, updates);
+
+        res.status(200).json({
+            message: "Roadmap updated successfully",
+            data: updated
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// DELETE ROADMAP
+router.delete("/roadmap/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteRoadmap(id);
+
+        res.status(200).json({
+            message: "Roadmap deleted successfully",
+            deleted
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+module.exports = router;
