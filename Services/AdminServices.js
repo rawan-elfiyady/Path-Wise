@@ -1,5 +1,6 @@
 const RoadmapRepo = require ("../Repositories/RoadmapRepository");
 const TrackRepo = require ("../Repositories/TracksRepository");
+const TopicRepo = require ("../Repositories/TopicRepository");
 
 async function createRoadmap(Data) {
     try {
@@ -89,6 +90,43 @@ async function deleteTrack(id) {
     }
 }
 
+
+//////////////////////////////Topics////////////////////////////////////
+
+
+async function createTopic(Data) {
+    try {
+        const topic = await TopicRepo.createTopic(Data);
+        return topic;
+    } catch (error) {
+        throw new Error(`Error creating topic: ${error.message}`);
+    }
+}
+
+async function getAllTopics() {
+    return await TopicRepo.getAllTopics();
+}
+
+async function getTopicById(id) {
+    return await TopicRepo.getTopicById(id);
+}
+
+async function getTopicByName(name) {
+    return await TopicRepo.getTopicByName(name);
+}
+
+async function updateTopic(id, updates) {
+    return await TopicRepo.updateTopic(id, updates);
+}
+
+async function deleteTopic(id) {
+    try {
+        return await TopicRepo.deleteTopic(id);
+    } catch (err) {
+        throw new Error(`Error deleting topic: ${err.message}`);
+    }
+}
+
 module.exports = {
     createRoadmap,
     getAllRoadmaps,
@@ -103,5 +141,11 @@ module.exports = {
     getTrackById,
     getTrackByName,
     updateTrack,
-    deleteTrack
+    deleteTrack,
+    createTopic,
+    getAllTopics,
+    getTopicById,
+    getTopicByName,
+    updateTopic,
+    deleteTopic
 };
