@@ -11,7 +11,11 @@ module.exports = (sequelize, DataTypes) => {
         entityId: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        }
+        },
+        icon: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     });
 
     Roadmap.associate = (models) => {

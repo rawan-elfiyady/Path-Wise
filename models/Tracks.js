@@ -15,7 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         crashCourse: {
             type: DataTypes.STRING,
             allowNull: false,
-        }
+        },
+        icon: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     });
 
     Track.associate = (models) => {

@@ -20,6 +20,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    linkedinLink: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    githubLink: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    summary: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
     cv:{
         type: DataTypes.STRING,
         allowNull: true,
@@ -52,6 +64,23 @@ module.exports = (sequelize, DataTypes) => {
           foreignKey: "userId",
           as: "userContributions",
           onDelete: "SET NULL",
+        });
+        
+        User.hasMany(models.UserExperience, {
+          foreignKey: "userId",
+          as: "userExperiences",
+          onDelete: "CASCADE",
+        });
+
+        User.hasMany(models.UserProjects, {
+          foreignKey: "userId",
+          as: "userProjects",
+          onDelete: "CASCADE",
+        });
+        User.hasMany(models.UserEducation, {
+          foreignKey: "userId",
+          as: "userEducations",
+          onDelete: "CASCADE",
         });
     };
  return User;

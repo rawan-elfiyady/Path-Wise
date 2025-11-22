@@ -16,7 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         crashCourse: {
             type: DataTypes.STRING,
             allowNull: false,
-        }
+        },
+        icon: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     });
 
     Technology.associate = (models) => {
