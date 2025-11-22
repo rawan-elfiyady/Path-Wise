@@ -1,4 +1,5 @@
 const RoadmapRepo = require ("../Repositories/RoadmapRepository");
+const TrackRepo = require ("../Repositories/TracksRepository");
 
 async function createRoadmap(Data) {
     try {
@@ -51,6 +52,43 @@ async function deleteRoadmap(id) {
     }
 }
 
+
+/////////////////////////////Tracks///////////////////////////////////////
+
+
+async function createTrack(Data) {
+    try {
+        const track = await TrackRepo.createTrack(Data);
+        return track;
+    } catch (error) {
+        throw new Error(`Error creating track: ${error.message}`);
+    }
+}
+
+async function getAllTracks() {
+    return await TrackRepo.getAllTracks();
+}
+
+async function getTrackById(id) {
+    return await TrackRepo.getTrackById(id);
+}
+
+async function getTrackByName(name) {
+    return await TrackRepo.getTrackByName(name);
+}
+
+async function updateTrack(id, updates) {
+    return await TrackRepo.updateTrack(id, updates);
+}
+
+async function deleteTrack(id) {
+    try {
+        return await TrackRepo.deleteTrack(id);
+    } catch (err) {
+        throw new Error(`Error deleting track: ${err.message}`);
+    }
+}
+
 module.exports = {
     createRoadmap,
     getAllRoadmaps,
@@ -59,5 +97,11 @@ module.exports = {
     searchRoadmaps,
     getTrackRoadmaps,
     updateRoadmap,
-    deleteRoadmap
+    deleteRoadmap,
+    createTrack,
+    getAllTracks,
+    getTrackById,
+    getTrackByName,
+    updateTrack,
+    deleteTrack
 };

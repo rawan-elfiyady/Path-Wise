@@ -1,0 +1,104 @@
+const RoadmapRepo = require ("../Repositories/RoadmapRepository");
+const SavedSkillRepo = require ("../Repositories/SavedSkillsRepository");
+const TrackRepo = require ("../Repositories/TracksRepository");
+
+
+////////////////////////Roadmaps//////////////////////////
+
+async function getAllRoadmaps() {
+    return await RoadmapRepo.getAllRoadmaps();
+}
+
+async function getRoadmapById(id) {
+    return await RoadmapRepo.getRoadmapById(id);
+}
+
+async function getRoadmapByName(name) {
+    return await RoadmapRepo.getRoadmapByName(name);
+}
+
+async function getTrackRoadmaps(id) {
+    return await RoadmapRepo.getTrackRoadmaps(id);
+}
+
+async function searchRoadmaps(search) {
+    if (!search || search.trim() === "") {
+        throw new Error("Search term is required");
+    }
+
+    const roadmaps = await RoadmapRepo.searchRoadmaps(search);
+
+    if (!roadmaps || roadmaps.length === 0) {
+        return [];
+    }
+
+    return roadmaps;
+}
+
+////////////////////////////////SavedSkills//////////////////////////////////
+
+async function createSevedSkill(Data) {
+    try {
+        const SavedSkill = await SavedSkillRepo.createSevedSkill(Data);
+        return SavedSkill;
+    } catch (error) {
+        throw new Error(`Error creating SavedSkill: ${error.message}`);
+    }
+}
+
+async function getAllSavedSkills() {
+    return await SavedSkillRepo.getAllSavedSkills();
+}
+
+async function getSavedSkillById(id) {
+    return await SavedSkillRepo.getSavedSkillById(id);
+}
+
+async function getSavedSkillByName(name) {
+    return await SavedSkillRepo.getSavedSkillByName(name);
+}
+
+async function updateSavedSkill(id, updates) {
+    return await SavedSkillRepo.updateSavedSkill(id, updates);
+}
+
+async function deleteSavedSkill(id) {
+    try {
+        return await SavedSkillRepo.deleteSavedSkill(id);
+    } catch (err) {
+        throw new Error(`Error deleting SavedSkill: ${err.message}`);
+    }
+}
+
+
+//////////////////////////////////Tracks///////////////////////////////////
+
+
+async function getAllTracks() {
+    return await TrackRepo.getAllTracks();
+}
+
+async function getTrackById(id) {
+    return await TrackRepo.getTrackById(id);
+}
+
+async function getTrackByName(name) {
+    return await TrackRepo.getTrackByName(name);
+}
+
+module.exports = {
+    getAllRoadmaps,
+    getRoadmapById,
+    getRoadmapByName,
+    getTrackRoadmaps,
+    searchRoadmaps,
+    createSevedSkill,
+    getAllSavedSkills,
+    getSavedSkillById,
+    getSavedSkillByName,
+    updateSavedSkill,
+    deleteSavedSkill,
+    getAllTracks,
+    getTrackById,
+    getTrackByName
+}
