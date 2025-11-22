@@ -3,7 +3,7 @@ const { Sequelize, Roadmap } = db;
 const { Op } = require("sequelize");
 
 // CREATE
-async function createRoadmap(data) {
+/*async function createRoadmap(data) {
     try {
         const roadmap = await Roadmap.create({
             name: data.name,
@@ -15,7 +15,22 @@ async function createRoadmap(data) {
         console.error("Error creating roadmap:", error);
         throw new Error("Failed to create roadmap");
     }
+}*/
+async function createRoadmap(data) {
+    try {
+        console.log("Data to insert:", data); // <--- نطبع البيانات
+        const roadmap = await Roadmap.create({
+            name: data.name,
+            entityType: data.entityType,
+            entityId: data.entityId
+        });
+        return roadmap;
+    } catch (error) {
+        console.error("Sequelize / DB error details:", error); // <--- نطبع كل التفاصيل
+        throw new Error("Failed to create roadmap: " + error.message);
+    }
 }
+
 
 // GET BY ID
 async function getRoadmapById(id) {

@@ -119,4 +119,96 @@ router.delete("/roadmap/:id", async (req, res, next) => {
     }
 });
 
+
+/////////////////////////////////Tracks/////////////////////////////////////
+
+
+router.post("/createTrack", async (req, res, next) => {
+    try {
+        const { name, description, keyConcepts, crashCourse } = req.body;
+        const track = await AdminServices.createTrack({ name, description, keyConcepts, crashCourse });
+
+        res.status(201).json({
+            message: "Track created successfully",
+            data: track
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+// GET ALL ROADMAPS
+router.get("/tracks", async (req, res, next) => {
+    try {
+        const tracks = await AdminServices.getAllTracks();
+        res.status(200).json(tracks);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET BY ID
+router.get("/track/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const track = await AdminServices.getTrackById(id);
+
+        res.status(200).json(track);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET BY NAME (use query param)
+router.get("/trackByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const track = await AdminServices.getTrackByName(name);
+
+        res.status(200).json(track);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.put("/track/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updated = await AdminServices.updateTrack(id, updates);
+
+        res.status(200).json({
+            message: "Track updated successfully",
+            data: updated
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// DELETE ROADMAP
+router.delete("/track/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteTrack(id);
+
+        res.status(200).json({
+            message: "Track deleted successfully",
+            deleted
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+
 module.exports = router;
