@@ -138,7 +138,7 @@ router.post("/createTrack", async (req, res, next) => {
     }
 });
 
-// GET ALL ROADMAPS
+
 router.get("/tracks", async (req, res, next) => {
     try {
         const tracks = await AdminServices.getAllTracks();
@@ -193,7 +193,7 @@ router.put("/track/:id", async (req, res, next) => {
     }
 });
 
-// DELETE ROADMAP
+
 router.delete("/track/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
@@ -201,6 +201,96 @@ router.delete("/track/:id", async (req, res, next) => {
 
         res.status(200).json({
             message: "Track deleted successfully",
+            deleted
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+///////////////////////////////Topics/////////////////////////////
+
+
+router.post("/createTopic", async (req, res, next) => {
+    try {
+        const { name, description } = req.body;
+        const topic = await AdminServices.createTopic({ name, description });
+
+        res.status(201).json({
+            message: "Topic created successfully",
+            data: topic
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Topics", async (req, res, next) => {
+    try {
+        const topics = await AdminServices.getAllTopics();
+        res.status(200).json(topics);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET BY ID
+router.get("/Topic/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const topic = await AdminServices.getTopicById(id);
+
+        res.status(200).json(topic);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET BY NAME (use query param)
+router.get("/TopicByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const topic = await AdminServices.getTopicByName(name);
+
+        res.status(200).json(topic);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.put("/Topic/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updated = await AdminServices.updateTopic(id, updates);
+
+        res.status(200).json({
+            message: "Topic updated successfully",
+            data: updated
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.delete("/Topic/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteTopic(id);
+
+        res.status(200).json({
+            message: "Topic deleted successfully",
             deleted
         });
     }
