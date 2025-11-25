@@ -19,15 +19,15 @@ app.use('/user', user);
 app.use('/auth', auth);
 app.use('/admin', admin);
 
-//db.sequelize
-  //.sync({alter: true})
-  //.then(() => { 
-  //console.log("Synced db.");
-  //})
+/*db.sequelize
+  .sync({alter: true})
+  .then(() => { 
+  console.log("Synced db.");
+  })
 
-  //.catch((err) => {
-  //console.log("Failed to sync.db:" + err.message);
-  //});
+  .catch((err) => {
+  console.log("Failed to sync.db:" + err.message);
+  });*/
 
 const PORT = process.env.PORT || 8080;
 

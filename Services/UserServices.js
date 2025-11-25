@@ -3,6 +3,8 @@ const SavedSkillRepo = require ("../Repositories/SavedSkillsRepository");
 const TrackRepo = require ("../Repositories/TracksRepository");
 const TopicRepo = require ("../Repositories/TopicRepository");
 const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
+const SourceRepo = require("../Repositories/SourcesRepository");
+
 
 ////////////////////////Roadmaps//////////////////////////
 
@@ -118,9 +120,36 @@ async function getTechnologyByName(name) {
     return await TechnologyRepo.getTechnologyByName(name);
 }
 
-/*async function getTechnologyByTrackId(trackId) {
+async function getTechnologyByTrackId(trackId) {
     return await TechnologyRepo.getTechnologyByTrackId(trackId);
-}*/
+}
+
+/////////////////////////////Sources////////////////////////////////
+
+
+async function createSource(data) {
+    try {
+        return await SourceRepo.createSource(data);
+    } catch (error) {
+        throw new Error("Error creating source: " + error.message);
+    }
+}
+
+
+async function getAllSources() {
+    return await SourceRepo.getAllSources();
+}
+
+async function getSourceById(id) {
+    return await SourceRepo.getSourceById(id);
+}
+
+async function getSourcesByTopicId(topicId) {
+    return await SourceRepo.getSourcesByTopicId(topicId);
+}
+
+
+
 
 module.exports = {
     getAllRoadmaps,
@@ -142,6 +171,10 @@ module.exports = {
     getTopicByName,
     getAllTechnologies,
     getTechnologyById,
-    getTechnologyByName
-    
+    getTechnologyByName,
+    getTechnologyByTrackId,
+    createSource,
+    getAllSources,
+    getSourceById,
+    getSourcesByTopicId
 };

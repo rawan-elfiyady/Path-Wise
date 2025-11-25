@@ -305,7 +305,7 @@ router.delete("/Topic/:id", async (req, res, next) => {
 router.post("/createTechnology", async (req, res, next) => {
     try {
         const { name, description, category, crashCourse } = req.body;
-        const technology = await AdminServices.createTopic({ name, description, category, crashCourse });
+        const technology = await AdminServices.createTechnology({ name, description, category, crashCourse });
 
         res.status(201).json({
             message: "Technology created successfully",
@@ -341,7 +341,7 @@ router.get("/Technology/:id", async (req, res, next) => {
     }
 });
 
-/*router.get("/TechnologyTrackId/:id", async (req, res, next) => {
+router.get("/TechnologyTrackId/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
         const technology = await AdminServices.getTechnologyByTrackId(id);
@@ -351,7 +351,7 @@ router.get("/Technology/:id", async (req, res, next) => {
     catch (err) {
         next(err);
     }
-});*/
+});
 
 // GET BY NAME (use query param)
 router.get("/TechnologyByName", async (req, res, next) => {
@@ -396,6 +396,96 @@ router.delete("/Technology/:id", async (req, res, next) => {
         });
     }
     catch (err) {
+        next(err);
+    }
+});
+
+///////////////////////////////Sources////////////////////////////////////\
+
+router.post("/createSource", async (req, res, next) => {
+    try {
+        const { name, category, link, topicId } = req.body;
+        const source = await AdminServices.createSource({ name, category, link, topicId });
+
+        res.status(201).json({
+            message: "Source created successfully",
+            data: source
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Sources", async (req, res, next) => {
+    try {
+        const sources = await AdminServices.getAllSources();
+        res.status(200).json(sources);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Source/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const source = await AdminServices.getSourceById(id);
+        res.status(200).json(source);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/SourceByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const source = await AdminServices.getSourceByName(name);
+        res.status(200).json(source);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/SourceTopic/:topicId", async (req, res, next) => {
+    try {
+        const topicId = req.params.topicId;
+        const sources = await AdminServices.getSourcesByTopicId(topicId);
+        res.status(200).json(sources);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.put("/Source/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+        const updated = await AdminServices.updateSource(id, updates);
+
+        res.status(200).json({
+            message: "Source updated successfully",
+            data: updated
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.delete("/Source/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteSource(id);
+
+        res.status(200).json({
+            message: "Source deleted successfully",
+            deleted
+        });
+    } catch (err) {
         next(err);
     }
 });

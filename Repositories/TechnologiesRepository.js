@@ -28,9 +28,18 @@ async function getTechnologyByName(name) {
     return await Technology.findOne({ where: { name } });
 }
 
-/*async function getTechnologyByTrackId(trackId) {
-    return await Technology.findAll({ where: { trackId } });
-}*/
+async function getTechnologyByTrackId(trackId) {
+    return await Technology.findAll({
+        include: [
+            {
+                association: "tracks",  
+                where: { id: trackId },
+                attributes: [],
+            }
+        ]
+    });
+}
+
 
 
 async function getAllTechnologies() {
@@ -63,7 +72,7 @@ module.exports ={
     getAllTechnologies,
     getTechnologyById,
     getTechnologyByName,
-    
+    getTechnologyByTrackId,
     updateTechnology,
     deleteTechnology
 
