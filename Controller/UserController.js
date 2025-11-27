@@ -202,6 +202,198 @@ router.get("/TrackByName", async (req, res, next) => {
     }
 });
 
+
+///////////////////////////////Topics//////////////////////////////////
+
+
+router.get("/Topics", async (req, res, next) => {
+    try {
+        const tpoics = await UserServices.getAllTracks();
+        res.status(200).json(topics);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Topic/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const topic = await UserServices.getTopicById(id);
+
+        res.status(200).json(topic);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/TopicByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const topic = await UserServices.getTopicByName(name);
+
+        res.status(200).json(topic);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+///////////////////////////////Tecknology//////////////////////////
+
+
+router.get("/Technologies", async (req, res, next) => {
+    try {
+        const technologies = await UserServices.getAllTechnologies();
+        res.status(200).json(technologies);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Technology/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const technology = await UserServices.getTechnologyById(id);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+router.get("/TechnologyTrack/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const technology = await UserServices.getTechnologyByTrackId(id);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/TechnologyByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const technology = await UserServices.getTechnologyByName(name);
+
+        res.status(200).json(technology);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+//////////////////////////////////Sources/////////////////////////////////////
+
+router.post("/createSource", async (req, res, next) => {
+    try {
+        const { name, category, link, topicId } = req.body;
+        const source = await UserServices.createSource({ name, category, link, topicId });
+
+        res.status(201).json({
+            message: "Source suggested successfully",
+            data: source
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Sources", async (req, res, next) => {
+    try {
+        const sources = await UserServices.getAllSources();
+        res.status(200).json(sources);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Source/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const source = await UserServices.getSourceById(id);
+        res.status(200).json(source);
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/SourceTopic/:topicId", async (req, res, next) => {
+    try {
+        const topicId = req.params.topicId;
+        const sources = await UserServices.getSourcesByTopicId(topicId);
+        res.status(200).json(sources);
+    } catch (err) {
+        next(err);
+    }
+});
+
+/////////////////////////////REgions/////////////////////////
+
+
+router.get("/Regions", async (req, res, next) => {
+    try {
+        const regions = await UserServices.getAllRegions();
+        res.status(200).json(regions);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Region/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const region = await UserServices.getRegionById(id);
+
+        res.status(200).json(region);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/RegionTrack/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const regions = await UserServices.getRegionsByTrackId(id);
+
+        res.status(200).json(regions);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/RegionByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const region = await UserServices.getRegionByName(name);
+
+        res.status(200).json(region);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
 /////////////////////User///////////////////////////////////
 
 

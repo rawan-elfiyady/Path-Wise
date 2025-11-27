@@ -1,6 +1,10 @@
 const RoadmapRepo = require ("../Repositories/RoadmapRepository");
 const SavedSkillRepo = require ("../Repositories/SavedSkillsRepository");
 const TrackRepo = require ("../Repositories/TracksRepository");
+const TopicRepo = require ("../Repositories/TopicRepository");
+const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
+const SourceRepo = require("../Repositories/SourcesRepository");
+const RegionsRepository = require("../Repositories/RegionsRepository");
 
 
 ////////////////////////Roadmaps//////////////////////////
@@ -86,6 +90,91 @@ async function getTrackByName(name) {
     return await TrackRepo.getTrackByName(name);
 }
 
+
+///////////////////////////////Topics///////////////////////////////////////
+
+async function getAllTopics() {
+    return await TopicRepo.getAllTopics();
+}
+
+async function getTopicById(id) {
+    return await TopicRepo.getTopicById(id);
+}
+
+async function getTopicByName(name) {
+    return await TopicRepo.getTopicByName(name);
+
+}
+
+//////////////////////////////////Technology//////////////////////////
+
+
+async function getAllTechnologies() {
+    return await TechnologyRepo.getAllTechnologies();
+}
+
+async function getTechnologyById(id) {
+    return await TechnologyRepo.getTechnologyById(id);
+}
+
+async function getTechnologyByName(name) {
+    return await TechnologyRepo.getTechnologyByName(name);
+}
+
+async function getTechnologyByTrackId(trackId) {
+    return await TechnologyRepo.getTechnologyByTrackId(trackId);
+}
+
+/////////////////////////////Sources////////////////////////////////
+
+
+async function createSource(data) {
+    try {
+        return await SourceRepo.createSource(data);
+    } catch (error) {
+        throw new Error("Error creating source: " + error.message);
+    }
+}
+
+
+async function getAllSources() {
+    return await SourceRepo.getAllSources();
+}
+
+async function getSourceById(id) {
+    return await SourceRepo.getSourceById(id);
+}
+
+async function getSourcesByTopicId(topicId) {
+    return await SourceRepo.getSourcesByTopicId(topicId);
+}
+
+
+///////////////////////////////Regions////////////////////////
+
+
+
+async function getAllRegions() {
+    return await RegionsRepository.getAllRegions();
+}
+
+async function getRegionById(id) {
+    return await RegionsRepository.getRegionById(id);
+}
+
+async function getRegionByTrackId(trackId) {
+    return await RegionsRepository.getRegionByTrackId(trackId);
+}
+
+async function getRegionByName(name) {
+    return await RegionsRepository.getRegionByName(name);
+}
+
+
+
+
+
+
 module.exports = {
     getAllRoadmaps,
     getRoadmapById,
@@ -100,5 +189,20 @@ module.exports = {
     deleteSavedSkill,
     getAllTracks,
     getTrackById,
-    getTrackByName
-}
+    getTrackByName,
+    getAllTopics,
+    getTopicById,
+    getTopicByName,
+    getAllTechnologies,
+    getTechnologyById,
+    getTechnologyByName,
+    getTechnologyByTrackId,
+    createSource,
+    getAllSources,
+    getSourceById,
+    getSourcesByTopicId,
+    getAllRegions,
+    getRegionById,
+    getRegionByTrackId,
+    getRegionByName
+};

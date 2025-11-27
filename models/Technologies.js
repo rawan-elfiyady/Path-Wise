@@ -1,4 +1,3 @@
-
 module.exports = (sequelize, DataTypes) => {
     const Technology = sequelize.define("Technology", {
         name: {
@@ -27,16 +26,16 @@ module.exports = (sequelize, DataTypes) => {
         Technology.belongsToMany(models.Track, {
             through: "TrackTechnologies",
             foreignKey: "technologyId",
-            as: "technology"
+            as: "tracks"      // ✔ صح
         });
 
         Technology.hasMany(models.Roadmap, {
-        foreignKey: "entityId",
-        constraints: false,
-        scope: {
-            entityType: "Technology",
-        },
-        as: "roadmaps",
+            foreignKey: "entityId",
+            constraints: false,
+            scope: {
+                entityType: "Technology",
+            },
+            as: "roadmaps",
         });
     };
 

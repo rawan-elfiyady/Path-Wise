@@ -1,6 +1,10 @@
 const RoadmapRepo = require ("../Repositories/RoadmapRepository");
 const TrackRepo = require ("../Repositories/TracksRepository");
 const TopicRepo = require ("../Repositories/TopicRepository");
+const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
+const SourceRepo = require("../Repositories/SourcesRepository");
+const RegionsRepository = require("../Repositories/RegionsRepository");
+
 
 async function createRoadmap(Data) {
     try {
@@ -127,6 +131,146 @@ async function deleteTopic(id) {
     }
 }
 
+
+/////////////////////////Technology///////////////////////////
+
+
+async function createTechnology(Data) {
+    try {
+        const technology = await TechnologyRepo.createTechnology(Data);
+        return technology;
+    } catch (error) {
+        throw new Error(`Error creating technology: ${error.message}`);
+    }
+}
+
+async function getAllTechnologies() {
+    return await TechnologyRepo.getAllTechnologies();
+}
+
+async function getTechnologyById(id) {
+    return await TechnologyRepo.getTechnologyById(id);
+}
+
+async function getTechnologyByTrackId(trackId) {
+    return await TechnologyRepo.getTechnologyByTrackId(trackId);
+}
+
+async function getTechnologyByName(name) {
+    return await TechnologyRepo.getTechnologyByName(name);
+}
+
+async function updateTechnology(id, updates) {
+    return await TechnologyRepo.updateTechnology(id, updates);
+}
+
+async function deleteTechnology(id) {
+    try {
+        return await TechnologyRepo.deleteTechnology(id);
+    } catch (err) {
+        throw new Error(`Error deleting technology: ${err.message}`);
+    }
+}
+
+/////////////////////////////Sources/////////////////////////////////////
+
+
+async function createSource(data) {
+    try {
+        return await SourceRepo.createSource(data);
+    } catch (error) {
+        throw new Error("Error creating source: " + error.message);
+    }
+}
+
+
+async function getAllSources() {
+    return await SourceRepo.getAllSources();
+}
+
+async function getSourceById(id) {
+    return await SourceRepo.getSourceById(id);
+}
+
+async function getSourceByName(name) {
+    return await SourceRepo.getSourceByName(name);
+}
+
+async function getSourcesByTopicId(topicId) {
+    return await SourceRepo.getSourcesByTopicId(topicId);
+}
+
+
+async function updateSource(id, data) {
+    try {
+        return await SourceRepo.updateSource(id, data);
+    } catch (error) {
+        throw new Error("Error updating source: " + error.message);
+    }
+}
+
+
+async function deleteSource(id) {
+    try {
+        return await SourceRepo.deleteSource(id);
+    } catch (error) {
+        throw new Error("Error deleting source: " + error.message);
+    }
+}
+
+////////////////////////////////Regions/////////////////////////////
+
+
+async function createRegion(data) {
+    try {
+        const region = await RegionsRepository.createRegion(data);
+        return region;
+    } catch (error) {
+        throw new Error("Error creating region: " + error.message);
+    }
+}
+
+
+
+async function getAllRegions() {
+    return await RegionsRepository.getAllRegions();
+}
+
+
+
+async function getRegionById(id) {
+    return await RegionsRepository.getRegionById(id);
+}
+
+
+
+async function getRegionByName(name) {
+    return await RegionsRepository.getRegionByName(name);
+}
+
+
+
+async function getRegionByTrackId(trackId) {
+    return await RegionsRepository.getRegionByTrackId(trackId);
+}
+
+
+
+async function updateRegion(id, data) {
+    return await RegionsRepository.updateRegion(id, data);
+}
+
+
+
+async function deleteRegion(id) {
+    return await RegionsRepository.deleteRegion(id);
+}
+
+
+
+
+
+
 module.exports = {
     createRoadmap,
     getAllRoadmaps,
@@ -147,5 +291,26 @@ module.exports = {
     getTopicById,
     getTopicByName,
     updateTopic,
-    deleteTopic
+    deleteTopic,
+    createTechnology,
+    getAllTechnologies,
+    getTechnologyById,
+    getTechnologyByName,
+    getTechnologyByTrackId,
+    updateTechnology,
+    deleteTechnology,
+    createSource,
+    getAllSources,
+    getSourceById,
+    getSourceByName,
+    getSourcesByTopicId,
+    updateSource,
+    deleteSource,
+    createRegion,
+    getAllRegions,
+    getRegionById,
+    getRegionByName,
+    getRegionByTrackId,
+    updateRegion,
+    deleteRegion
 };
