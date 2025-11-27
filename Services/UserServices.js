@@ -4,6 +4,7 @@ const TrackRepo = require ("../Repositories/TracksRepository");
 const TopicRepo = require ("../Repositories/TopicRepository");
 const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
 const SourceRepo = require("../Repositories/SourcesRepository");
+const RegionsRepository = require("../Repositories/RegionsRepository");
 
 
 ////////////////////////Roadmaps//////////////////////////
@@ -149,6 +150,29 @@ async function getSourcesByTopicId(topicId) {
 }
 
 
+///////////////////////////////Regions////////////////////////
+
+
+
+async function getAllRegions() {
+    return await RegionsRepository.getAllRegions();
+}
+
+async function getRegionById(id) {
+    return await RegionsRepository.getRegionById(id);
+}
+
+async function getRegionByTrackId(trackId) {
+    return await RegionsRepository.getRegionByTrackId(trackId);
+}
+
+async function getRegionByName(name) {
+    return await RegionsRepository.getRegionByName(name);
+}
+
+
+
+
 
 
 module.exports = {
@@ -176,5 +200,9 @@ module.exports = {
     createSource,
     getAllSources,
     getSourceById,
-    getSourcesByTopicId
+    getSourcesByTopicId,
+    getAllRegions,
+    getRegionById,
+    getRegionByTrackId,
+    getRegionByName
 };

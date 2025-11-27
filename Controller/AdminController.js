@@ -491,4 +491,107 @@ router.delete("/Source/:id", async (req, res, next) => {
 });
 
 
+/////////////////////////////////Regions///////////////////////////////
+
+
+router.post("/createRegion", async (req, res, next) => {
+    try {
+        const { name } = req.body;
+        const region = await AdminServices.createRegion({ name });
+
+        res.status(201).json({
+            message: "Region created successfully",
+            data: region
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Regions", async (req, res, next) => {
+    try {
+        const regions = await AdminServices.getAllRegions();
+        res.status(200).json(regions);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Region/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const region = await AdminServices.getRegionById(id);
+
+        res.status(200).json(region);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/RegionTrackId/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const regions = await AdminServices.getRegionsByTrackId(id);
+
+        res.status(200).json(regions);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/RegionByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const region = await AdminServices.getRegionByName(name);
+
+        res.status(200).json(region);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.put("/Region/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updated = await AdminServices.updateRegion(id, updates);
+
+        res.status(200).json({
+            message: "Region updated successfully",
+            data: updated
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.delete("/Region/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteRegion(id);
+
+        res.status(200).json({
+            message: "Region deleted successfully",
+            deleted
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
 module.exports = router;

@@ -3,6 +3,7 @@ const TrackRepo = require ("../Repositories/TracksRepository");
 const TopicRepo = require ("../Repositories/TopicRepository");
 const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
 const SourceRepo = require("../Repositories/SourcesRepository");
+const RegionsRepository = require("../Repositories/RegionsRepository");
 
 
 async function createRoadmap(Data) {
@@ -217,6 +218,57 @@ async function deleteSource(id) {
     }
 }
 
+////////////////////////////////Regions/////////////////////////////
+
+
+async function createRegion(data) {
+    try {
+        const region = await RegionsRepository.createRegion(data);
+        return region;
+    } catch (error) {
+        throw new Error("Error creating region: " + error.message);
+    }
+}
+
+
+
+async function getAllRegions() {
+    return await RegionsRepository.getAllRegions();
+}
+
+
+
+async function getRegionById(id) {
+    return await RegionsRepository.getRegionById(id);
+}
+
+
+
+async function getRegionByName(name) {
+    return await RegionsRepository.getRegionByName(name);
+}
+
+
+
+async function getRegionByTrackId(trackId) {
+    return await RegionsRepository.getRegionByTrackId(trackId);
+}
+
+
+
+async function updateRegion(id, data) {
+    return await RegionsRepository.updateRegion(id, data);
+}
+
+
+
+async function deleteRegion(id) {
+    return await RegionsRepository.deleteRegion(id);
+}
+
+
+
+
 
 
 module.exports = {
@@ -253,5 +305,12 @@ module.exports = {
     getSourceByName,
     getSourcesByTopicId,
     updateSource,
-    deleteSource
+    deleteSource,
+    createRegion,
+    getAllRegions,
+    getRegionById,
+    getRegionByName,
+    getRegionByTrackId,
+    updateRegion,
+    deleteRegion
 };

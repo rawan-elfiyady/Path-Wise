@@ -341,6 +341,59 @@ router.get("/SourceTopic/:topicId", async (req, res, next) => {
     }
 });
 
+/////////////////////////////REgions/////////////////////////
+
+
+router.get("/Regions", async (req, res, next) => {
+    try {
+        const regions = await UserServices.getAllRegions();
+        res.status(200).json(regions);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/Region/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const region = await UserServices.getRegionById(id);
+
+        res.status(200).json(region);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/RegionTrack/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const regions = await UserServices.getRegionsByTrackId(id);
+
+        res.status(200).json(regions);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
+router.get("/RegionByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const region = await UserServices.getRegionByName(name);
+
+        res.status(200).json(region);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+
 /////////////////////User///////////////////////////////////
 
 
