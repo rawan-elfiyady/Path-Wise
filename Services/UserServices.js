@@ -5,6 +5,11 @@ const TopicRepo = require ("../Repositories/TopicRepository");
 const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
 const SourceRepo = require("../Repositories/SourcesRepository");
 const RegionsRepository = require("../Repositories/RegionsRepository");
+const QuizRepo = require("../Repositories/QuizzesRepository");
+const QuestionsRepo = require("../Repositories/QuestionsRepository");
+const UserRepo = require("../Repositories/UserRepository");
+const ContributionRepo = require("../Repositories/UserContributionRepository");
+
 
 
 ////////////////////////Roadmaps//////////////////////////
@@ -170,8 +175,95 @@ async function getRegionByName(name) {
     return await RegionsRepository.getRegionByName(name);
 }
 
+///////////////////////////////Quizess//////////////////////////////////
 
 
+async function getAllQuizzes() {
+    return await QuizRepo.getAllQuizzes();
+}
+
+async function getQuizById(id) {
+    return await QuizRepo.getQuizById(id);
+}
+
+async function getQuizzesByEntity(entityType, entityId) {
+    return await QuizRepo.getQuizzesByEntity(entityType, entityId);
+}
+
+async function getQuizByName(name) {
+    return await QuizRepo.getQuizByName(name);
+}
+
+//////////////////////////////////Questions///////////////////////////
+
+
+async function getQuestionsByQuizId(quizId) {
+    return await QuestionsRepo.getQuestionsByQuizId(quizId);
+}
+
+async function getQuestionById(id) {
+    return await QuestionsRepo.getQuestionById(id);
+}
+
+
+//--------------------------User--------------------------------------//
+
+
+
+async function registerUser(data) {
+    return await UserRepo.createUser(data);
+}
+
+async function loginUser(email) {
+    return await UserRepo.getUserByEmail(email);
+}
+
+async function getUserProfile(id) {
+    return await UserRepo.getUserById(id);
+}
+
+async function updateUserProfile(id, data) {
+    return await UserRepo.updateUser(id, data);
+}
+
+
+//----------------------------------UserContribution----------------------------//
+
+
+async function createContribution(data) {
+    return await ContributionRepo.createUserContribution(data);
+}
+
+async function getContributionById(id, userId) {
+    const contribution = await ContributionRepo.getContributionById(id);
+
+    if (!contribution || contribution.userId !== userId)
+        throw new Error("Contribution not found or not yours");
+
+    return contribution;
+}
+
+async function getUserContributions(userId) {
+    return await ContributionRepo.getAllContributions({
+        where: { userId }
+    });
+}
+
+async function updateUserContribution(id, userId, data) {
+    return await ContributionRepo.updateUserContribution(id, userId, data);
+}
+
+async function deleteUserContribution(id, userId) {
+    const contribution = await ContributionRepo.getContributionById(id);
+
+    if (!contribution || contribution.userId !== userId)
+        throw new Error("Contribution not found or not yours");
+
+    if (contribution.requestStatus !== "Pending")
+        throw new Error("Cannot delete contribution after approval/rejection");
+
+    return await ContributionRepo.deleteContribution(id);
+}
 
 
 
@@ -204,5 +296,21 @@ module.exports = {
     getAllRegions,
     getRegionById,
     getRegionByTrackId,
-    getRegionByName
+    getRegionByName,
+    getAllQuizzes,
+    getQuizById,
+    getQuizzesByEntity,
+    getQuizByName,
+    getQuestionsByQuizId,
+    getQuestionById,
+    registerUser,
+    loginUser,
+    getUserProfile,
+    updateUserProfile,
+    createContribution,
+    getContributionById,
+    getUserContributions,
+    updateUserContribution,
+    deleteUserContribution
+
 };

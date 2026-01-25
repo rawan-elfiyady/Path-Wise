@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         isCorrect: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
+            defaultValue: false,
         },
         rightAnswer: {
             type: DataTypes.STRING,
@@ -16,15 +17,17 @@ module.exports = (sequelize, DataTypes) => {
 
     QuizGradeAnswer.associate = (models) => {
         QuizGradeAnswer.belongsTo(models.QuizGrade, {
-            foreignKey: "quizGardeId",
+            foreignKey: "quizGradeId", 
             as: "quizGrade",
+            onDelete: "CASCADE",
         });
 
         QuizGradeAnswer.belongsTo(models.Question, {
             foreignKey: "questionId",
-            as: "Question",
+            as: "question",
+            onDelete: "CASCADE",
         });
     };
 
     return QuizGradeAnswer;
-}
+};

@@ -37,9 +37,9 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: "CASCADE",
         });
 
-        User.belongsToMany(models.Quiz, {
-          through: "QuizGrade",
-          foreignKey: "userId",
+        User.hasMany(models.QuizGrade, {
+            foreignKey: "userId",
+            as: "quizGrades",
         });
 
         User.belongsToMany(models.Roadmap, {

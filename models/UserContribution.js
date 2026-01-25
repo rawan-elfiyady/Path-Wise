@@ -12,7 +12,22 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        userId: {                 
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+        topicId: {                
+            type: DataTypes.INTEGER,
+            allowNull: true,      
+        }
     });
 
+    UserContribution.associate = (models) => {
+        UserContribution.belongsTo(models.User, { 
+            foreignKey: "userId", 
+            as: "user" 
+        });
+    };
+
     return UserContribution;
-}
+};
