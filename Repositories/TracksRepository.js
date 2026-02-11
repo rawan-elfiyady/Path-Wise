@@ -34,9 +34,9 @@ async function getAllTracks() {
 }
 
 
-async function updateTrack(id, name) {
+async function updateTrack(id, updates) {
     try {
-        await Track.update({ name }, { where: { id } });
+        await Track.update({ updates }, { where: { id } });
         return await Track.findByPk(id);
     } catch (error) {
         console.error("Error updating track:", error);

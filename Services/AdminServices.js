@@ -4,6 +4,12 @@ const TopicRepo = require ("../Repositories/TopicRepository");
 const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
 const SourceRepo = require("../Repositories/SourcesRepository");
 const RegionsRepository = require("../Repositories/RegionsRepository");
+const QuizRepo = require("../Repositories/QuizzesRepository");
+const QuestionRepo = require("../Repositories/QuestionsRepository");
+const UserRepo = require("../Repositories/UserRepository");
+const ContributionRepo = require("../Repositories/UserContributionRepository");
+const db = require("../models");
+
 
 
 async function createRoadmap(Data) {
@@ -100,6 +106,11 @@ async function deleteTrack(id) {
 
 async function createTopic(Data) {
     try {
+        const roadmap = await db.Roadmap.findByPk(Data.roadmapId);
+
+        if (!roadmap) {
+            throw new Error("Roadmap not found");
+        }
         const topic = await TopicRepo.createTopic(Data);
         return topic;
     } catch (error) {
@@ -110,6 +121,11 @@ async function createTopic(Data) {
 async function getAllTopics() {
     return await TopicRepo.getAllTopics();
 }
+
+async function getTopicsByRoadmapId(roadmapId) {
+    return await TopicRepo.getTopicsByRoadmapId(roadmapId);
+}
+
 
 async function getTopicById(id) {
     return await TopicRepo.getTopicById(id);
@@ -126,7 +142,7 @@ async function updateTopic(id, updates) {
 async function deleteTopic(id) {
     try {
         return await TopicRepo.deleteTopic(id);
-    } catch (err) {
+    } catch (err) {         
         throw new Error(`Error deleting topic: ${err.message}`);
     }
 }
@@ -263,10 +279,133 @@ async function updateRegion(id, data) {
 
 
 async function deleteRegion(id) {
+    try{
     return await RegionsRepository.deleteRegion(id);
+    } catch (err) {
+        throw new Error(`Error deleting region: ${err.message}`);
+    }
 }
 
 
+///////////////////////////////Quizess///////////////////////////////////////////
+
+
+async function createQuiz(data) {
+    try {
+        const quiz = await QuizRepo.createQuiz(data);
+        return quiz;
+    } catch (error) {
+        throw new Error(`Error creating quiz: ${error.message}`);
+    }
+}
+
+async function getAllQuizzes() {
+    return await QuizRepo.getAllQuizzes();
+}
+
+async function getQuizById(id) {
+    return await QuizRepo.getQuizById(id);
+}
+
+async function getQuizzesByEntity(entityType, entityId) {
+    return await QuizRepo.getQuizzesByEntity(entityType, entityId);
+}
+
+async function getQuizByName(name) {
+    return await QuizRepo.getQuizByName(name);
+}
+
+async function updateQuiz(id, updates) {
+    return await QuizRepo.updateQuiz(id, updates);
+}
+
+async function deleteQuiz(id) {
+    try {
+        return await QuizRepo.deleteQuiz(id);
+    } catch (err) {
+        throw new Error(`Error deleting quiz: ${err.message}`);
+    }
+}
+
+
+////////////////////////////////////////Questions//////////////////////////////////
+
+
+
+async function createQuestion(data) {
+    return await QuestionRepo.createQuestion(data);
+}
+
+async function getAllQuestions() {
+    return await QuestionRepo.getAllQuestions();
+}
+
+async function getQuestionById(id) {
+    return await QuestionRepo.getQuestionById(id);
+}
+
+async function getQuestionsByQuizId(quizId) {
+    return await QuestionRepo.getQuestionsByQuizId(quizId);
+}
+
+async function getQuestionByText(question) {
+    return await QuestionRepo.getQuestionByText(question);
+}
+
+async function updateQuestion(id, updates) {
+    return await QuestionRepo.updateQuestion(id, updates);
+}
+
+async function deleteQuestion(id) {
+    try{
+    return await QuestionRepo.deleteQuestion(id);
+    } catch (err) {
+        throw new Error(`Error deleting question: ${err.message}`);
+    }
+}
+
+//---------------------------------User---------------------------------------//
+
+
+async function getAllUsers() {
+    return await UserRepo.getAllUsers();
+}
+
+async function getUserById(id) {
+    return await UserRepo.getUserById(id);
+}
+
+async function updateUser(id, updatedFields) {
+    return await UserRepo.updateUser(id, updatedFields);
+}
+
+async function deleteUser(id) {
+    return await UserRepo.deleteUser(id);
+}
+
+
+//-----------------------------UserContribution----------------------------//
+
+
+async function getAllContributions() {
+    return await ContributionRepo.getAllContributions();
+}
+
+async function getUserContribution(id) {
+    return await ContributionRepo.getContributionById(id);
+}
+
+async function approveContribution(id) {
+    return await ContributionRepo.approveContribution(id);
+}
+
+async function rejectContribution(id) {
+    return await ContributionRepo.rejectContribution(id);
+}
+
+async function deleteContribution(id) {
+    return await ContributionRepo.deleteContribution(id);
+}
 
 
 
@@ -288,6 +427,7 @@ module.exports = {
     deleteTrack,
     createTopic,
     getAllTopics,
+    getTopicsByRoadmapId,
     getTopicById,
     getTopicByName,
     updateTopic,
@@ -312,5 +452,28 @@ module.exports = {
     getRegionByName,
     getRegionByTrackId,
     updateRegion,
-    deleteRegion
+    deleteRegion,
+    createQuiz,
+    getAllQuizzes,
+    getQuizById,
+    getQuizzesByEntity,
+    getQuizByName,
+    updateQuiz,
+    deleteQuiz,
+    createQuestion,
+    getAllQuestions,
+    getQuestionById,
+    getQuestionsByQuizId,
+    getQuestionByText,
+    updateQuestion,
+    deleteQuestion,
+    getAllUsers,
+    getUserById,
+    updateUser,
+    deleteUser,
+    getAllContributions,
+    getUserContribution,
+    approveContribution,
+    rejectContribution,
+    deleteContribution
 };

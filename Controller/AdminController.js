@@ -215,8 +215,8 @@ router.delete("/track/:id", async (req, res, next) => {
 
 router.post("/createTopic", async (req, res, next) => {
     try {
-        const { name, description } = req.body;
-        const topic = await AdminServices.createTopic({ name, description });
+        const { name, description, roadmapId } = req.body;
+        const topic = await AdminServices.createTopic({ name, description, roadmapId });
 
         res.status(201).json({
             message: "Topic created successfully",
@@ -225,6 +225,18 @@ router.post("/createTopic", async (req, res, next) => {
     }
     catch (error) {
         next(error);
+    }
+});
+
+router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
+    try {
+        const { roadmapId } = req.params;
+        const topics = await AdminServices.getTopicsByRoadmapId(roadmapId);
+
+        res.status(200).json(topics);
+    }
+    catch (err) {
+        next(err);
     }
 });
 
@@ -238,6 +250,7 @@ router.get("/Topics", async (req, res, next) => {
         next(err);
     }
 });
+
 
 // GET BY ID
 router.get("/Topic/:id", async (req, res, next) => {
@@ -537,7 +550,7 @@ router.get("/Region/:id", async (req, res, next) => {
 router.get("/RegionTrackId/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
-        const regions = await AdminServices.getRegionsByTrackId(id);
+        const regions = await AdminServices.getRegionByTrackId(id);
 
         res.status(200).json(regions);
     }
@@ -593,5 +606,317 @@ router.delete("/Region/:id", async (req, res, next) => {
     }
 });
 
+//////////////////////////////Quizess/////////////////////////////
+
+
+router.post("/createQuiz", async (req, res, next) => {
+    try {
+        const { name, numOfQuestions, grade, entityType, entityId } = req.body;
+        const quiz = await AdminServices.createQuiz({ name, numOfQuestions, grade, entityType, entityId });
+
+        res.status(201).json({
+            message: "Quiz created successfully",
+            data: quiz
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Quizzes", async (req, res, next) => {
+    try {
+        const quizzes = await AdminServices.getAllQuizzes();
+        res.status(200).json(quizzes);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Quiz/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const quiz = await AdminServices.getQuizById(id);
+        res.status(200).json(quiz);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/QuizByEntity", async (req, res, next) => {
+    try {
+        const { type, id } = req.query; 
+        const quizzes = await AdminServices.getQuizzesByEntity(type, id);
+        res.status(200).json(quizzes);
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/QuizByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const quiz = await AdminQuizServices.getQuizByName(name);
+        res.status(200).json(quiz);
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.put("/Quiz/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+        const updated = await AdminServices.updateQuiz(id, updates);
+
+        res.status(200).json({
+            message: "Quiz updated successfully",
+            data: updated
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.delete("/Quiz/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteQuiz(id);
+        res.status(200).json({
+            message: "Quiz deleted successfully",
+            deleted
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+///////////////////////////////////Questions/////////////////////////////
+
+
+// CREATE
+router.post("/createQuestion", async (req, res, next) => {
+    try {
+        const { question, answer, degree, quizId } = req.body;
+        const Question = await AdminServices.createQuestion({question, answer, degree, quizId});
+
+        res.status(201).json({
+            message: "Question created successfully",
+            data: Question
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET ALL
+router.get("/Questions", async (req, res, next) => {
+    try {
+        const questions = await AdminServices.getAllQuestions();
+        res.status(200).json(questions);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET BY ID
+router.get("/Question/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const question = await AdminServices.getQuestionById(id);
+
+        res.status(200).json(question);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET BY QUIZ ID
+router.get("/QuestionsByQuiz/:quizId", async (req, res, next) => {
+    try {
+        const quizId = req.params.quizId;
+        const list = await AdminServices.getQuestionsByQuizId(quizId);
+
+        res.status(200).json(list);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET BY QUESTION TEXT
+router.get("/QuestionByText", async (req, res, next) => {
+    try {
+        const text = req.query.question;
+        const question = await AdminServices.getQuestionByText(text);
+
+        res.status(200).json(question);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// UPDATE
+router.put("/Question/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        await AdminServices.updateQuestion(id, updates);
+
+        res.status(200).json({
+            message: "Question updated successfully"
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// DELETE
+router.delete("/Question/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const deleted = await AdminServices.deleteQuestion(id);
+
+        res.status(200).json({
+            message: "Question deleted successfully",
+            deleted
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+//--------------------------------User---------------------------------//
+
+
+// GET ALL USERS
+router.get("/users", async (req, res, next) => {
+    try {
+        const users = await AdminServices.getAllUsers();
+        res.status(200).json(users);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// GET USER BY ID
+router.get("/user/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const user = await AdminServices.getUserById(id);
+
+        res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// UPDATE USER
+router.put("/user/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updated = await AdminServices.updateUser(id, updates);
+
+        res.status(200).json({
+            message: "User updated successfully",
+            data: updated
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// DELETE USER
+router.delete("/user/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const deleted = await AdminServices.deleteUser(id);
+
+        res.status(200).json({
+            message: "User deleted successfully",
+            deleted
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+//-----------------------------------UserContribution-------------------------------//
+
+// GET ALL CONTRIBUTIONS
+router.get("/contributions", async (req, res, next) => {
+    try {
+        const contributions = await AdminServices.getAllContributions();
+        res.status(200).json(contributions);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET CONTRIBUTION BY ID
+router.get("/contribution/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const contribution = await AdminServices.getUserContribution(id);
+
+        res.status(200).json(contribution);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// APPROVE CONTRIBUTION
+router.put("/contribution/:id/approve", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await AdminServices.approveContribution(id);
+
+        res.status(200).json({
+            message: "Contribution approved successfully"
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// REJECT CONTRIBUTION
+router.put("/contribution/:id/reject", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await AdminServices.rejectContribution(id);
+
+        res.status(200).json({
+            message: "Contribution rejected successfully"
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// DELETE CONTRIBUTION
+router.delete("/contribution/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        await AdminServices.deleteContribution(id);
+
+        res.status(200).json({
+            message: "Contribution deleted successfully"
+        });
+    } catch (error) {
+        next(error);
+    }
+});
 
 module.exports = router;

@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const UserServices = require("../Services/UserServices");
 const UserRepo = require("../Repositories/UserRepository");
+const verifyToken = require("../Middlewares/verifyToken"); 
+
 
 
 //////////////////////////////////ROADMAPS///////////////////////////////
@@ -78,8 +80,8 @@ router.get("/searchRoadmaps", async (req, res, next) => {
 
 router.post("/SaveSkill", async (req, res, next) => {
     try {
-        const { name } = req.body;
-        const SaveSkill = await UserServices.createSevedSkill({ name });
+        const { name, userId } = req.body;
+        const SaveSkill = await UserServices.createSevedSkill({ name, userId });
 
         res.status(201).json({
             message: "Skill saved successfully",
@@ -209,6 +211,18 @@ router.get("/TrackByName", async (req, res, next) => {
 router.get("/Topics", async (req, res, next) => {
     try {
         const tpoics = await UserServices.getAllTracks();
+        res.status(200).json(topics);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
+    try {
+        const { roadmapId } = req.params;
+        const topics = await UserServices.getTopicsByRoadmapId(roadmapId);
+
         res.status(200).json(topics);
     }
     catch (err) {
@@ -393,21 +407,225 @@ router.get("/RegionByName", async (req, res, next) => {
     }
 });
 
+////////////////////////////Quizess///////////////////////////////////
+
+router.get("/Quizzes", async (req, res, next) => {
+    try {
+        const quizzes = await UserServices.getAllQuizzes();
+        res.status(200).json(quizzes);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/Quiz/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const quiz = await UserServices.getQuizById(id);
+        res.status(200).json(quiz);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/QuizByEntity", async (req, res, next) => {
+    try {
+        const { type, id } = req.query; 
+        const quizzes = await UserServices.getQuizzesByEntity(type, id);
+        res.status(200).json(quizzes);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.get("/QuizByName", async (req, res, next) => {
+    try {
+        const name = req.query.name;
+        const quiz = await UserServices.getQuizByName(name);
+        res.status(200).json(quiz);
+    } catch (error) {
+        next(error);
+    }
+});
+
+///////////////////////////////////////Questions///////////////////////////////////////
+
+
+router.get("/QuestionsByQuiz/:id", async (req, res, next) => {
+    try {
+        const quizId = req.params.id;
+        const questions = await UserServices.getQuestionsByQuizId(quizId);
+
+        res.status(200).json(questions);
+    } 
+    catch (err) {
+        next(err);
+    }
+});
+
+// GET single question
+router.get("/Question/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const question = await UserServices.getQuestionById(id);
+
+        res.status(200).json(question);
+    } 
+    catch (err) {
+        next(err);
+    }
+});
+
 
 /////////////////////User///////////////////////////////////
 
 
-router.get("/getUser/:id", async ( req, res, next) => {
+// REGISTER
+router.post("/register", async (req, res, next) => {
     try {
-        const id = req.params.id;
-        const user = await UserRepo.getUserById(id);
-        if(!user){
-            return res.status(404).json({message: "not found"});
-        }
-        return res.status(200).json(user);
+        const { name, email, password, image, cv, role } = req.body;
+        const user = await UserServices.registerUser({ name, email, password, image, cv, role });
+
+        res.status(201).json({
+            message: "User registered successfully",
+            data: user
+        });
     } catch (error) {
         next(error);
     }
-}) ;
+});
+
+
+// LOGIN
+router.post("/login", async (req, res, next) => {
+    try {
+        const { email } = req.body;
+
+        const user = await UserServices.loginUser(email);
+
+        res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// GET PROFILE BY ID
+router.get("/user/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const user = await UserServices.getUserProfile(id);
+
+        res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// UPDATE PROFILE
+router.put("/user/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updated = await UserServices.updateUserProfile(id, updates);
+
+        res.status(200).json({
+            message: "User updated successfully",
+            data: updated
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+//-----------------------------------UserContribution-------------------------------//
+
+
+router.post("/contribution", async (req, res, next) => {
+    try {
+
+        const { name, link, userId,topicId } = req.body;
+        const contribution = await UserServices.createContribution({ name, link, userId, topicId, requestStatus: "Pending" });
+
+        res.status(201).json({
+            message: "Contribution created successfully",
+            data: contribution
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/contribution/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const userId = req.user.id;
+
+        const contribution = await UserServices.getContributionById(id, userId);
+        res.status(200).json(contribution);
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET ALL MY CONTRIBUTIONS
+router.get("/contributions", async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+
+        const contributions = await UserServices.getUserContributions(userId);
+        res.status(200).json(contributions);
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+// UPDATE MY CONTRIBUTION (ONLY IF PENDING)
+router.put("/contribution/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const userId = req.user.id;
+        const data = req.body;
+
+        const updated = await UserServices.updateUserContribution(id, userId, data);
+
+        res.status(200).json({
+            message: "Contribution updated successfully",
+            data: updated
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+// DELETE MY CONTRIBUTION (ONLY IF PENDING)
+router.delete("/contribution/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const userId = req.user.id;
+
+        await UserServices.deleteUserContribution(id, userId);
+
+        res.status(200).json({
+            message: "Contribution deleted successfully"
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 module.exports = router; 

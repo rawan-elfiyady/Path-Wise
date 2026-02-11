@@ -41,10 +41,11 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: "CASCADE",
         });
 
-        Quiz.belongsToMany(models.User, {
-            through: "QuizGrade",
+        Quiz.hasMany(models.QuizGrade, {
             foreignKey: "quizId",
+            as: "grades",
         });
+
     };
 
     return Quiz;

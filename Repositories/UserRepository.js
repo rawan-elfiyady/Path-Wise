@@ -1,6 +1,6 @@
 const db = require("../models");
 const {Sequelize, User} = db;
-
+const { Op } = require("sequelize");
 
 async function getUserById(id) {
   try {
@@ -34,7 +34,7 @@ async function getUserByEmail(email) {
 
 async function getAllUsers(){
     try{
-        const users = await User.findAll({ attributes: [id, name, email, image]});
+        const users = await User.findAll({ attributes: ["id", "name", "email", "image", "cv"]});
 
         if(!users){
             throw new Error("No Users Found");
@@ -52,8 +52,9 @@ async function createUser(data) {
     try {
         const user = await User.create({name: data.name,
                                         email: data.email,
-                                        password: data.hashedPassword,
-                                        role: data.role,
+                                        password: data.password,
+                                        cv: data.cv,
+                                        role: data.role
                                         });
 
         const addedUser = await User.findOne({where: {email: data.email}});
@@ -81,6 +82,15 @@ async function updateUser(id, updatedFields) {
   }
 }
 
+async function deleteUser(id) {
+    try {
+        return await User.destroy({ where: { id } });
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        throw new Error("Failed to delete user");
+    }
+}
+
 
 
 module.exports ={
@@ -88,4 +98,6 @@ module.exports ={
     getUserByEmail,
     getAllUsers,
     createUser,
+    updateUser,
+    deleteUser
 }
