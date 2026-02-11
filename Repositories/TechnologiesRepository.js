@@ -47,9 +47,9 @@ async function getAllTechnologies() {
 }
 
 
-async function updateTechnology(id, name) {
+async function updateTechnology(id, updates) {
     try {
-        await Technology.update({ name }, { where: { id } });
+        await Technology.update({ updates }, { where: { id } });
         return await Technology.findByPk(id);
     } catch (error) {
         console.error("Error updating technology:", error);

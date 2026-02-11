@@ -67,9 +67,9 @@ async function getTrackRoadmaps(id) {
 }
 
 // UPDATE
-async function updateRoadmap(id, name) {
+async function updateRoadmap(id, updates) {
     try {
-        await Roadmap.update({ name }, { where: { id } });
+        await Roadmap.update(updates , { where: { id } });
         return await Roadmap.findByPk(id);
     } catch (error) {
         console.error("Error updating roadmap:", error);

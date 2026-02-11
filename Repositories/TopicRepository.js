@@ -40,9 +40,9 @@ async function getAllTopics() {
 }
 
 
-async function updateTopic(id, name) {
+async function updateTopic(id, updates) {
     try {
-        await Topic.update({ name }, { where: { id } });
+        await Topic.update({ updates }, { where: { id } });
         return await Topic.findByPk(id);
     } catch (error) {
         console.error("Error updating topic:", error);

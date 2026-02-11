@@ -375,8 +375,8 @@ async function getUserById(id) {
     return await UserRepo.getUserById(id);
 }
 
-async function updateUser(id, data) {
-    return await UserRepo.updateUser(id, data);
+async function updateUser(id, updatedFields) {
+    return await UserRepo.updateUser(id, updatedFields);
 }
 
 async function deleteUser(id) {

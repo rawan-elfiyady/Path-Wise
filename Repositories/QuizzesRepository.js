@@ -48,9 +48,9 @@ async function getQuizzesByEntity(entityType, entityId) {
 }
 
 // UPDATE
-async function updateQuiz(id, data) {
+async function updateQuiz(id, updates) {
     try {
-        await Quiz.update(data, { where: { id } });
+        await Quiz.update(updates, { where: { id } });
         return await Quiz.findByPk(id);
     } catch (error) {
         console.error("Error updating quiz:", error);

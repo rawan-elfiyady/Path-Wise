@@ -34,9 +34,9 @@ async function getSavedSkillByName(name) {
 }
 
 
-async function updateSavedSkill(id, name) {
+async function updateSavedSkill(id, updates) {
     try {
-        await SavedSkill.update({ name }, { where: { id } });
+        await SavedSkill.update({ updates }, { where: { id } });
         return await SavedSkill.findByPk(id);
     } catch (error) {
         console.error("Error updating SavedSkill:", error);
