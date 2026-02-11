@@ -17,16 +17,17 @@
     }
 }
 
-
-async function getTopicById(id) {
-    return await Topic.findByPk(id);
-}
-
 async function getTopicsByRoadmapId(roadmapId) {
     return await Topic.findAll({
         where: { roadmapId }
     });
 }
+
+async function getTopicById(id) {
+    return await Topic.findByPk(id);
+}
+
+
 
 
 async function getTopicByName(name) {

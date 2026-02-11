@@ -8,6 +8,8 @@ const QuizRepo = require("../Repositories/QuizzesRepository");
 const QuestionRepo = require("../Repositories/QuestionsRepository");
 const UserRepo = require("../Repositories/UserRepository");
 const ContributionRepo = require("../Repositories/UserContributionRepository");
+const db = require("../models");
+
 
 
 async function createRoadmap(Data) {
@@ -104,6 +106,11 @@ async function deleteTrack(id) {
 
 async function createTopic(Data) {
     try {
+        const roadmap = await db.Roadmap.findByPk(Data.roadmapId);
+
+        if (!roadmap) {
+            throw new Error("Roadmap not found");
+        }
         const topic = await TopicRepo.createTopic(Data);
         return topic;
     } catch (error) {

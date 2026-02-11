@@ -221,7 +221,7 @@ router.get("/Topics", async (req, res, next) => {
 router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
     try {
         const { roadmapId } = req.params;
-        const topics = await AdminServices.getTopicsByRoadmapId(roadmapId);
+        const topics = await UserServices.getTopicsByRoadmapId(roadmapId);
 
         res.status(200).json(topics);
     }

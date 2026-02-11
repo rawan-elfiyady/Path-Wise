@@ -228,10 +228,11 @@ router.post("/createTopic", async (req, res, next) => {
     }
 });
 
-
-router.get("/Topics", async (req, res, next) => {
+router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
     try {
-        const topics = await AdminServices.getAllTopics();
+        const { roadmapId } = req.params;
+        const topics = await AdminServices.getTopicsByRoadmapId(roadmapId);
+
         res.status(200).json(topics);
     }
     catch (err) {
@@ -239,11 +240,10 @@ router.get("/Topics", async (req, res, next) => {
     }
 });
 
-router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
-    try {
-        const { roadmapId } = req.params;
-        const topics = await AdminServices.getTopicsByRoadmapId(roadmapId);
 
+router.get("/Topics", async (req, res, next) => {
+    try {
+        const topics = await AdminServices.getAllTopics();
         res.status(200).json(topics);
     }
     catch (err) {
