@@ -215,8 +215,8 @@ router.delete("/track/:id", async (req, res, next) => {
 
 router.post("/createTopic", async (req, res, next) => {
     try {
-        const { name, description } = req.body;
-        const topic = await AdminServices.createTopic({ name, description });
+        const { name, description, roadmapId } = req.body;
+        const topic = await AdminServices.createTopic({ name, description, roadmapId });
 
         res.status(201).json({
             message: "Topic created successfully",
@@ -238,6 +238,19 @@ router.get("/Topics", async (req, res, next) => {
         next(err);
     }
 });
+
+router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
+    try {
+        const { roadmapId } = req.params;
+        const topics = await AdminServices.getTopicsByRoadmapId(roadmapId);
+
+        res.status(200).json(topics);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
 
 // GET BY ID
 router.get("/Topic/:id", async (req, res, next) => {

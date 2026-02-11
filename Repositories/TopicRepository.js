@@ -7,7 +7,8 @@
         console.log("Data to insert:", data); // <--- نطبع البيانات
         const topic = await Topic.create({
             name: data.name,
-            description: data.description
+            description: data.description,
+            roadmapId: data.roadmapId
         });
         return topic;
     } catch (error) {
@@ -19,6 +20,12 @@
 
 async function getTopicById(id) {
     return await Topic.findByPk(id);
+}
+
+async function getTopicsByRoadmapId(roadmapId) {
+    return await Topic.findAll({
+        where: { roadmapId }
+    });
 }
 
 
@@ -56,6 +63,7 @@ async function deleteTopic(id) {
 module.exports = {
     createTopic,
     getAllTopics,
+    getTopicsByRoadmapId,
     getTopicById,
     getTopicByName,
     updateTopic,

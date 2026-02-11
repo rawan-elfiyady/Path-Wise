@@ -9,6 +9,7 @@ const QuizRepo = require("../Repositories/QuizzesRepository");
 const QuestionsRepo = require("../Repositories/QuestionsRepository");
 const UserRepo = require("../Repositories/UserRepository");
 const ContributionRepo = require("../Repositories/UserContributionRepository");
+const { underscoredIf } = require("sequelize/lib/utils");
 
 
 
@@ -46,9 +47,9 @@ async function searchRoadmaps(search) {
 
 ////////////////////////////////SavedSkills//////////////////////////////////
 
-async function createSevedSkill(Data) {
+async function createSevedSkill(name, userId) {
     try {
-        const SavedSkill = await SavedSkillRepo.createSevedSkill(Data);
+        const SavedSkill = await SavedSkillRepo.createSevedSkill(name, userId);
         return SavedSkill;
     } catch (error) {
         throw new Error(`Error creating SavedSkill: ${error.message}`);
@@ -105,6 +106,11 @@ async function getAllTopics() {
 async function getTopicById(id) {
     return await TopicRepo.getTopicById(id);
 }
+
+async function getTopicsByRoadmapId(roadmapId) {
+    return await TopicRepo.getTopicsByRoadmapId(roadmapId);
+}
+
 
 async function getTopicByName(name) {
     return await TopicRepo.getTopicByName(name);
@@ -283,6 +289,7 @@ module.exports = {
     getTrackById,
     getTrackByName,
     getAllTopics,
+    getTopicsByRoadmapId,
     getTopicById,
     getTopicByName,
     getAllTechnologies,

@@ -6,9 +6,10 @@ const { Op } = require("sequelize");
 
 async function createSevedSkill(data) {
     try {
-        console.log("Data to insert:", data); 
+        console.log("Data to insert:",data ); 
         const savedSkill = await SavedSkill.create({
             name: data.name,
+            userId: data.userId
         });
         return savedSkill;
     } catch (error) {

@@ -80,8 +80,8 @@ router.get("/searchRoadmaps", async (req, res, next) => {
 
 router.post("/SaveSkill", async (req, res, next) => {
     try {
-        const { name } = req.body;
-        const SaveSkill = await UserServices.createSevedSkill({ name });
+        const { name, userId } = req.body;
+        const SaveSkill = await UserServices.createSevedSkill({ name, userId });
 
         res.status(201).json({
             message: "Skill saved successfully",
@@ -211,6 +211,18 @@ router.get("/TrackByName", async (req, res, next) => {
 router.get("/Topics", async (req, res, next) => {
     try {
         const tpoics = await UserServices.getAllTracks();
+        res.status(200).json(topics);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
+    try {
+        const { roadmapId } = req.params;
+        const topics = await AdminServices.getTopicsByRoadmapId(roadmapId);
+
         res.status(200).json(topics);
     }
     catch (err) {

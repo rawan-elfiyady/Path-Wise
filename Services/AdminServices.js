@@ -115,6 +115,11 @@ async function getAllTopics() {
     return await TopicRepo.getAllTopics();
 }
 
+async function getTopicsByRoadmapId(roadmapId) {
+    return await TopicRepo.getTopicsByRoadmapId(roadmapId);
+}
+
+
 async function getTopicById(id) {
     return await TopicRepo.getTopicById(id);
 }
@@ -130,7 +135,7 @@ async function updateTopic(id, updates) {
 async function deleteTopic(id) {
     try {
         return await TopicRepo.deleteTopic(id);
-    } catch (err) {
+    } catch (err) {         
         throw new Error(`Error deleting topic: ${err.message}`);
     }
 }
@@ -415,6 +420,7 @@ module.exports = {
     deleteTrack,
     createTopic,
     getAllTopics,
+    getTopicsByRoadmapId,
     getTopicById,
     getTopicByName,
     updateTopic,
