@@ -357,7 +357,7 @@ router.delete("/Topic/:id", verifyToken, authorize("admin"), async (req, res, ne
 
 //////////////////////////Technology///////////////////////////
 
-router.post("/createTechnology", async (req, res, next) => {
+router.post("/createTechnology", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { name, description, category, crashCourse } = req.body;
         const technology = await AdminServices.createTechnology({ name, description, category, crashCourse });
@@ -373,7 +373,7 @@ router.post("/createTechnology", async (req, res, next) => {
 });
 
 
-router.get("/Technologies", async (req, res, next) => {
+router.get("/Technologies", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const technologies = await AdminServices.getAllTechnologies();
         res.status(200).json(technologies);
@@ -384,7 +384,7 @@ router.get("/Technologies", async (req, res, next) => {
 });
 
 // GET BY ID
-router.get("/Technology/:id", async (req, res, next) => {
+router.get("/Technology/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const technology = await AdminServices.getTechnologyById(id);
@@ -396,7 +396,7 @@ router.get("/Technology/:id", async (req, res, next) => {
     }
 });
 
-router.post("/linkTechnologyTrack", async (req, res, next) => {
+router.post("/linkTechnologyTrack", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { trackId, technologyId } = req.body; 
 
@@ -411,7 +411,7 @@ router.post("/linkTechnologyTrack", async (req, res, next) => {
         next(error);
     }
 });
-router.get("/TechnologyTrackId/:id", async (req, res, next) => {
+router.get("/TechnologyTrackId/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const technology = await AdminServices.getTechnologyByTrackId(id);
@@ -424,7 +424,7 @@ router.get("/TechnologyTrackId/:id", async (req, res, next) => {
 });
 
 // GET BY NAME (use query param)
-router.get("/TechnologyByName", async (req, res, next) => {
+router.get("/TechnologyByName",  verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const technology = await AdminServices.getTechnologyByName(name);
@@ -437,7 +437,7 @@ router.get("/TechnologyByName", async (req, res, next) => {
 });
 
 
-router.put("/Technology/:id", async (req, res, next) => {
+router.put("/Technology/:id",  verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -455,7 +455,7 @@ router.put("/Technology/:id", async (req, res, next) => {
 });
 
 
-router.delete("/Technology/:id", async (req, res, next) => {
+router.delete("/Technology/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteTechnology(id);
