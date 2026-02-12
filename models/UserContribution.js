@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: "userId", 
             as: "user" 
         });
+        UserContribution.belongsTo(models.Topic, {
+            foreignKey: "topicId",
+            as: "topic",
+        });
     };
 
     return UserContribution;

@@ -6,15 +6,17 @@ const SourceRepo = require("../Repositories/SourcesRepository");
 const RegionsRepository = require("../Repositories/RegionsRepository");
 const QuizRepo = require("../Repositories/QuizzesRepository");
 const QuestionRepo = require("../Repositories/QuestionsRepository");
+const MarketDemandRepo = require("../Repositories/MarketDemandRepository");
 const UserRepo = require("../Repositories/UserRepository");
 const ContributionRepo = require("../Repositories/UserContributionRepository");
 const db = require("../models");
+const { get } = require("../Controller/AdminController");
 
 
 
-async function createRoadmap(Data) {
+async function createRoadmap(data) {
     try {
-        const roadmap = await RoadmapRepo.createRoadmap(Data);
+        const roadmap = await RoadmapRepo.createRoadmap(data);
         return roadmap;
     } catch (error) {
         throw new Error(`Error creating roadmap: ${error.message}`);
@@ -29,12 +31,28 @@ async function getRoadmapById(id) {
     return await RoadmapRepo.getRoadmapById(id);
 }
 
+async function getRoadmapsWithTopicsById(id){
+    return await RoadmapRepo.getRoadmapWithTopicsById(id);
+}
+
 async function getRoadmapByName(name) {
     return await RoadmapRepo.getRoadmapByName(name);
 }
 
 async function getTrackRoadmaps(id) {
     return await RoadmapRepo.getTrackRoadmaps(id);
+}
+
+async function getTechnologyRoadmaps(id) {
+    return await RoadmapRepo.getTechnologyRoadmaps(id);
+}
+
+async function getTracksRoadmaps() {
+    return await RoadmapRepo.getTracksRoadmaps();
+}
+
+async function getTechnologiesRoadmaps() {
+    return await RoadmapRepo.getTechnologiesRoadmaps();
 }
 
 async function searchRoadmaps(search) {
@@ -81,11 +99,20 @@ async function getAllTracks() {
 }
 
 async function getTrackById(id) {
-    return await TrackRepo.getTrackById(id);
+    const track = await TrackRepo.getTrackById(id);
+    if (!track) {
+        throw new Error("Track not found with ID: " + id);
+    }
+    return track;
+
 }
 
 async function getTrackByName(name) {
-    return await TrackRepo.getTrackByName(name);
+    const track = await TrackRepo.getTrackByName(name);
+    if (!track) {
+        throw new Error("Track not found with name: " + name);
+    }
+    return track;
 }
 
 async function updateTrack(id, updates) {
@@ -286,6 +313,31 @@ async function deleteRegion(id) {
     }
 }
 
+/////////////////////////////////////Statistics//////////////////////////////////
+
+async function addMarketDemand(data) {
+    return await MarketDemandRepo.addMarketDemand(data);
+}
+async function getTrackStatistics(id){
+    return await MarketDemandRepo.getTrackStatistics(id);
+}
+
+async function getRegionStatistics(id){
+    return await MarketDemandRepo.getRegionStatistics(id);
+}
+
+async function getMarketDemandByRegionAndTrack(trackId, regionId) {
+    return await MarketDemandRepo.getTrackRegionStatistics(trackId, regionId);
+}
+
+async function updateMarketDemand(id, data) {
+    return await MarketDemandRepo.updateMarketDemand(id, data);
+}
+
+async function deleteMarketDemand(id) {
+    return await MarketDemandRepo.deleteMarketDemand(id);
+}
+
 
 ///////////////////////////////Quizess///////////////////////////////////////////
 
@@ -415,8 +467,12 @@ module.exports = {
     getAllRoadmaps,
     getRoadmapById,
     getRoadmapByName,
+    getRoadmapsWithTopicsById,
     searchRoadmaps,
     getTrackRoadmaps,
+    getTechnologyRoadmaps,
+    getTechnologiesRoadmaps,
+    getTracksRoadmaps,
     updateRoadmap,
     deleteRoadmap,
     createTrack,
@@ -453,6 +509,12 @@ module.exports = {
     getRegionByTrackId,
     updateRegion,
     deleteRegion,
+    addMarketDemand,    
+    getTrackStatistics,
+    getRegionStatistics,
+    getMarketDemandByRegionAndTrack,
+    updateMarketDemand,
+    deleteMarketDemand,
     createQuiz,
     getAllQuizzes,
     getQuizById,

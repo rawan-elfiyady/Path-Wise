@@ -1,1 +1,93 @@
 Auth 
+
+Admin Endpoints {
+    ///////////////////////// Tracks /////////////////////
+    Create Track: {HTTP Method: (POST)
+    Endpoint:   http://localhost:8080/admin/createTracknd
+    Body: {
+    "name": "Backend Development",
+    "description": "In software development, the backend (or \"server-side\") is the invisible engine that powers an application. It is responsible for storing data, executing business logic, and ensuring that the frontend—the part you actually see and interact with—has the information it needs.",
+    "keyConcepts": "Core Components A typical backend architecture consists of three primary parts: The Server: The computer (physical or virtual) that receives incoming requests from users.The Application: The software running on the server that processes those requests, performs calculations, and decides what to send back. The Database: The storage system where information like user profiles, posts, and settings are kept securely. Key Responsibilities Data Management: Creating, reading, updating, and deleting data within databases like MySQL, PostgreSQL, or MongoDB. API Development: Building \"bridges\" (APIs) that allow the frontend and backend—or two different services—to talk to each other. Security & Auth: Handling user login (authentication) and making sure users only see data they are allowed to see (authorization). Business Logic: The specific \"rules\" of the app, such as calculating the total cost of a shopping cart or processing a payment. ",
+    
+"crashCourse" : "https://youtu.be/KOutPbKc9UM?si=yhCJonk7U7bRbth4"
+}
+},
+
+  Get Track by Id: 
+  {
+    HTTP Method: GET,
+  Endpoint: http://localhost:8080/admin/track/10
+  },
+
+  Get All Tracks:
+  {
+    HTTP Method: GET,
+    Endpoint: http://localhost:8080/admin/tracks
+  },
+
+  Get Track By Name: 
+  {
+    HTTP Method: Get,
+    Endpoint: http://localhost:8080/admin/trackByName?name=Backend Development
+  },
+
+  Update Track By Id:
+  {
+    HTTP Method: PUT,
+    Endpoint: http://localhost:8080/admin/track/1,
+    Body: {
+    "name": "Frontend Development",
+    "description": "Frontend"
+    }
+  },
+
+  Delete Track By Id: 
+  {
+    HTTP METHOD: DELETE,
+    Endpoint: http://localhost:8080/admin/track/1
+  },
+
+  ///////////////////////////////// Roadmaps //////////////////////////////////
+
+  Create Roadmap: {
+    HTTP METHOD: POST,
+    Endpoint: http://localhost:8080/admin/createRoadmap,
+    Body: {
+    "name": "Backend Roadmap",
+    "entityType": "Track",
+    "entityId": 1
+}
+  },
+
+  Get All Roadmaps: {
+    HTTP METHOD: GET,
+    Endpoint: http://localhost:8080/admin/roadmaps
+  },
+
+  Get Roadmap by Id: {
+    HTTP METHOD : GET,
+    Endpoint: http://localhost:8080/admin/roadmap/1
+  },
+
+  Get Roadmap by Name: {
+    HTTP METHOD : GET,
+    Endpoint: http://localhost:8080/admin/roadmapByName?name=AI Roadmap
+  },
+
+  Get Tracks Roadmap : {
+    HTTP METHOD : GET,
+    Endpoint: http://localhost:8080/admin/tracksRoadmaps
+  },
+
+  Get Technologies Roadmap : {
+    HTTP METHOD : GET,
+    Endpoint: http://localhost:8080/admin/technologiesRoadmaps
+  },
+
+  Get Roadmap By Technology Id: {
+    HTTP METHOD: GET,
+    Endpoint: 
+  }
+
+ 
+}

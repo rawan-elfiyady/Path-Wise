@@ -23,6 +23,23 @@ router.post("/signUp", async (req, res, next) => {
 }
 });
 
+router.post("/createAdmin", async (req, res, next) => {
+    try{
+        const {name, email, password} = req.body;
+        
+        const user = await AuthServices.createAdmin({name, email, password}); 
+
+        if(!user){
+            return res.status(404).json({message: "User Already Exist"});
+        }
+
+    return res.status(200).json(user);
+} catch(error){
+    res.status(500).json(error.message);
+}
+});
+
+
 router.post("/login", async (req, res, next) => {
     try{
         const {email, password} = req.body;

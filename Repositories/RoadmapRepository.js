@@ -1,24 +1,36 @@
-const db = require("../models");
+ const db = require("../models");
 const { Sequelize, Roadmap } = db;
 const { Op } = require("sequelize");
 
-// CREATE
-/*async function createRoadmap(data) {
-    try {
-        const roadmap = await Roadmap.create({
-            name: data.name,
-            entityType: data.entityType,
-            entityId: data.entityId
-        });
-        return roadmap;
-    } catch (error) {
-        console.error("Error creating roadmap:", error);
-        throw new Error("Failed to create roadmap");
-    }
-}*/
 async function createRoadmap(data) {
     try {
-        console.log("Data to insert:", data); // <--- نطبع البيانات
+        console.log("Data to insert:", data);
+
+        if(data.entityType !== "Track" && data.entityType !== "Technology") {
+            throw new Error("Invalid entity type. Must be 'Track' or 'Technology'.");
+        }
+
+        if (data.entityType === "Track") {
+            const track = await db.Track.findByPk(data.entityId);
+            if (!track) {
+                throw new Error(`Track not found with ID ${data.entityId}`);
+            }
+        } else if (data.entityType === "Technology") {
+            const technology = await db.Technology.findByPk(data.entityId);
+            if (!technology) {
+                throw new Error(`Technology not found with ID ${data.entityId}`);
+            }
+        }
+        const existingRoadmap = await Roadmap.findOne({
+            where: {
+                name: data.name,
+                entityType: data.entityType,
+                entityId: data.entityId
+            }
+        });
+        if (existingRoadmap) {
+            throw new Error("A roadmap with the same name and entity already exists.");
+        }
         const roadmap = await Roadmap.create({
             name: data.name,
             entityType: data.entityType,
@@ -31,86 +43,169 @@ async function createRoadmap(data) {
     }
 }
 
-
 // GET BY ID
 async function getRoadmapById(id) {
-    return await Roadmap.findByPk(id);
+    try{
+        const roadmap = await Roadmap.findByPk(id);
+
+        if(!roadmap) {
+            throw new Error("Roadmap not found with ID: " + id);
+        }
+
+        return roadmap;
+    }catch(error) {
+        throw new Error("Failed to get this roadmap" + error.message);
+    }  
 }
 
 async function getRoadmapWithTopicsById(id) {
-    const roadmap = await db.Roadmap.findByPk(id, {
-  include: [
-    {
-      model: db.Topic,
-      as: "topics",
-    },
-  ]
-});
 
- if(!roadmap) return null;
+    try{
+        const roadmap = await db.Roadmap.findByPk(id, {
+        include: [
+            {
+            model: db.Topic,
+            as: "topics",
+            },
+        ]
+    });
+
+    if(!roadmap){
+        throw new Error("Roadmap not fount with this ID " + id )
+    };
     
     return roadmap;
+    } catch(error){
+    throw new Error("Failed to get this roadmap with its topics: " + error.message);
+    }
 }
 
 // GET BY NAME
 async function getRoadmapByName(name) {
-    return await Roadmap.findOne({ where: { name } });
+    try{
+        const roadmap = await Roadmap.findOne({ where: { name } });
+
+        if(!roadmap){
+            throw new Error("Roadmap not found with name " + name)
+        }
+        return roadmap; 
+    } catch(error){
+        throw new Error("Roadmap Not Found " + Error.message);
+    }
 }
 
 // SEARCH
 async function searchRoadmaps(search) {
-    return await Roadmap.findAll({
+    try{
+        return await Roadmap.findAll({
         where: {
             name: { [Op.iLike]: `%${search}%` }
         }
     });
+    } catch(error){
+        throw new Error("Cannot Find Roadmaps " + error.message);
+    } 
 }
 
 async function getTechnologiesRoadmaps() {
-    const roadmaps = await Roadmap.findAll({
+    try{
+        const roadmaps = await Roadmap.findAll({
         where: {
             entityType: "Technology",
         }
     });
 
-        if(!roadmaps) return null
+        if(!roadmaps || roadmaps.length === 0) {
+            throw new Error("There is no roadmaps for Technologies");
+        }
 
     return roadmaps;
+    }catch(error) {
+        throw new Error("Cannot Get Roadmaps Related To Technologies " + error.message );
+    }
 }
 
 async function getTracksRoadmaps(id) {
-    const roadmaps = await Roadmap.findAll({
+    try{ 
+        const roadmaps = await Roadmap.findAll({
         where: {
             entityType: "Track",
         }
     });
  
-        if(!roadmaps) return null
+        if(!roadmaps) {
+            throw new Error("There is no roadmaps")
+        }
 
     return roadmaps;
+}catch(error){
+        throw new Error("Cannot Get Roadmaps Related To Tracks " + error.message );
+}
 }
 
+async function getTrackRoadmaps(id) {
+    try{ 
+        const roadmaps = await Roadmap.findAll({
+        where: {
+            entityType: "Track",
+            entityId: id
+        }
+    });
+
+        if(!roadmaps || roadmaps.length === 0) {
+            throw new Error("There is no roadmaps for Tracks");
+        }
+
+    return roadmaps;
+}catch(error){
+        throw new Error("Cannot Get Roadmaps Related To Tracks " + error.message );
+}
+}
+
+async function getTechnologyRoadmaps(id) {
+    try{ 
+        const roadmaps = await Roadmap.findAll({
+        where: {
+            entityType: "Technology",
+            entityId: id
+        }
+    });
+
+        if(!roadmaps || roadmaps.length === 0) {
+            throw new Error("There is no roadmaps for Technologies");
+        }
+
+    return roadmaps;
+}catch(error){
+        throw new Error("Cannot Get Roadmaps Related To Technologies " + error.message );
+}
+}
 
 // GET ALL
 async function getAllRoadmaps() {
-    return await Roadmap.findAll();
-}
+    try{
+        const roadmaps = await Roadmap.findAll();
 
-
-// GET ROADMAPS BY TRACK (OR ANY ENTITY)
-async function getTrackRoadmaps(id) {
-    return await Roadmap.findAll({
-        where: {
-            entityId: id,
-            entityType: "Track"  
+        if( !roadmaps ){
+            throw new Error("There is no Roadmaps ")
         }
-    });
+
+        return roadmaps;
+
+    }catch(error){
+        throw new Error("Cannot Get Roadmaps " + error.message );
+    }
 }
+
 
 
 // UPDATE
 async function updateRoadmap(id, updates) {
     try {
+        const roadmap = await Roadmap.findByPk(id);
+        if(!roadmap){
+            throw new Error("Roadmap Doesn't Exist");
+        }
         await Roadmap.update(updates , { where: { id } });
         return await Roadmap.findByPk(id);
     } catch (error) {
@@ -122,6 +217,10 @@ async function updateRoadmap(id, updates) {
 // DELETE
 async function deleteRoadmap(id) {
     try {
+        const roadmap = await Roadmap.findByPk(id);
+        if(!roadmap){
+            throw new Error("Roadmap Doesn't Exist");
+        }
         return await Roadmap.destroy({ where: { id } });
     } catch (error) {
         console.error("Error deleting roadmap:", error);
@@ -133,9 +232,13 @@ module.exports = {
     createRoadmap,
     getAllRoadmaps,
     getRoadmapById,
+    getRoadmapWithTopicsById,
     getRoadmapByName,
     searchRoadmaps,
-    getTrackRoadmaps,
+    getTracksRoadmaps,
+    getTechnologiesRoadmaps,
+    getTrackRoadmaps, 
+    getTechnologyRoadmaps,
     updateRoadmap,
     deleteRoadmap
 };

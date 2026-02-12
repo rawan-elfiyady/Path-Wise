@@ -66,22 +66,6 @@ module.exports = (sequelize, DataTypes) => {
           onDelete: "SET NULL",
         });
         
-        User.hasMany(models.UserExperience, {
-          foreignKey: "userId",
-          as: "userExperiences",
-          onDelete: "CASCADE",
-        });
-
-        User.hasMany(models.UserProjects, {
-          foreignKey: "userId",
-          as: "userProjects",
-          onDelete: "CASCADE",
-        });
-        User.hasMany(models.UserEducation, {
-          foreignKey: "userId",
-          as: "userEducations",
-          onDelete: "CASCADE",
-        });
     };
  return User;
 }

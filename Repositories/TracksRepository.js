@@ -20,23 +20,54 @@ async function createTrack(data) {
 
 
 async function getTrackById(id) {
-    return await Track.findByPk(id);
+    try {
+        const track = await Track.findByPk(id);
+        if (!track) {
+            throw new Error("Track not found with ID: " + id);
+        }
+        return track;
+    } catch (error) {
+        console.error("Error fetching track by ID:", error);
+        throw error;
+    }
 }
 
 
 async function getTrackByName(name) {
-    return await Track.findOne({ where: { name } });
+    try {
+        const track = await Track.findOne({ where: { name } });
+        if (!track) {
+            throw new Error("Track not found with name: " + name);
+        }
+        return track;
+    } catch (error) {
+        console.error("Error fetching track by name:", error);
+        throw error;
+    }
 }
 
 
 async function getAllTracks() {
-    return await Track.findAll();
+    try{
+        const tracks = await Track.findAll();
+    if (!tracks || tracks.length === 0) {
+        throw new Error("No tracks found");
+    }
+    return tracks;
+} catch (error) {
+    console.error("Error fetching all tracks:", error);
+    throw error;
+}
 }
 
 
 async function updateTrack(id, updates) {
     try {
-        await Track.update({ updates }, { where: { id } });
+        const track = await Track.findByPk(id);
+        if (!track) {
+            throw new Error("Track not found with ID: " + id);
+        }
+        await Track.update( updates , { where: { id } });
         return await Track.findByPk(id);
     } catch (error) {
         console.error("Error updating track:", error);
@@ -47,6 +78,10 @@ async function updateTrack(id, updates) {
 
 async function deleteTrack(id) {
     try {
+        const track = await Track.findByPk(id);
+        if (!track) {
+            throw new Error("Track not found with ID: " + id);
+        }
         return await Track.destroy({ where: { id } });
     } catch (error) {
         console.error("Error deleting track:", error);

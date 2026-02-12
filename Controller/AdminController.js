@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const AdminServices = require("../Services/AdminServices");
+const verifyToken = require("../Middlewares/verifyToken");
+const authorize = require("../Middlewares/Authorize")
 
 // CREATE ROADMAP
-router.post("/createRoadmap", async (req, res, next) => {
+router.post("/createRoadmap",verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { name, entityType, entityId } = req.body;
         const roadmap = await AdminServices.createRoadmap({ name, entityType, entityId });
@@ -19,7 +21,7 @@ router.post("/createRoadmap", async (req, res, next) => {
 });
 
 // GET ALL ROADMAPS
-router.get("/roadmaps", async (req, res, next) => {
+router.get("/roadmaps", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const roadmaps = await AdminServices.getAllRoadmaps();
         res.status(200).json(roadmaps);
@@ -29,8 +31,38 @@ router.get("/roadmaps", async (req, res, next) => {
     }
 });
 
+router.get("/roadmapWithTopics/:id", verifyToken, authorize("admin"), async(req, res, next) => {
+    try{
+        const id = req.params.id;
+        const roadmaps = await AdminServices.getRoadmapsWithTopicsById(id);
+        res.status(200).json(roadmaps);
+    } catch(error){
+        next(error);
+    }
+})
+
+router.get("/TracksRoadmaps", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const roadmaps = await AdminServices.getTracksRoadmaps();
+        res.status(200).json(roadmaps);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
+router.get("/TechnologiesRoadmaps", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const roadmaps = await AdminServices.getTechnologiesRoadmaps();
+        res.status(200).json(roadmaps);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
 // GET BY ID
-router.get("/roadmap/:id", async (req, res, next) => {
+router.get("/roadmap/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const roadmap = await AdminServices.getRoadmapById(id);
@@ -43,7 +75,7 @@ router.get("/roadmap/:id", async (req, res, next) => {
 });
 
 // GET BY NAME (use query param)
-router.get("/roadmapByName", async (req, res, next) => {
+router.get("/roadmapByName", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const roadmap = await AdminServices.getRoadmapByName(name);
@@ -56,7 +88,7 @@ router.get("/roadmapByName", async (req, res, next) => {
 });
 
 // GET ROADMAPS FOR A TRACK
-router.get("/trackRoadmaps/:id", async (req, res, next) => {
+router.get("/trackRoadmaps/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const roadmaps = await AdminServices.getTrackRoadmaps(id);
@@ -68,8 +100,19 @@ router.get("/trackRoadmaps/:id", async (req, res, next) => {
     }
 });
 
+router.get("/technologyRoadmaps/:id", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const roadmaps = await AdminServices.getTechnologyRoadmaps(id);
+        res.status(200).json(roadmaps);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
 // SEARCH ROADMAPS
-router.get("/searchRoadmaps", async (req, res, next) => {
+router.get("/searchRoadmaps", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { search } = req.query;
         const roadmaps = await AdminServices.searchRoadmaps(search);
@@ -86,7 +129,7 @@ router.get("/searchRoadmaps", async (req, res, next) => {
 });
 
 // UPDATE ROADMAP
-router.put("/roadmap/:id", async (req, res, next) => {
+router.put("/roadmap/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -104,7 +147,7 @@ router.put("/roadmap/:id", async (req, res, next) => {
 });
 
 // DELETE ROADMAP
-router.delete("/roadmap/:id", async (req, res, next) => {
+router.delete("/roadmap/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteRoadmap(id);
@@ -123,7 +166,7 @@ router.delete("/roadmap/:id", async (req, res, next) => {
 /////////////////////////////////Tracks/////////////////////////////////////
 
 
-router.post("/createTrack", async (req, res, next) => {
+router.post("/createTrack", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { name, description, keyConcepts, crashCourse } = req.body;
         const track = await AdminServices.createTrack({ name, description, keyConcepts, crashCourse });
@@ -139,7 +182,7 @@ router.post("/createTrack", async (req, res, next) => {
 });
 
 
-router.get("/tracks", async (req, res, next) => {
+router.get("/tracks", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const tracks = await AdminServices.getAllTracks();
         res.status(200).json(tracks);
@@ -150,11 +193,10 @@ router.get("/tracks", async (req, res, next) => {
 });
 
 // GET BY ID
-router.get("/track/:id", async (req, res, next) => {
+router.get("/track/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const track = await AdminServices.getTrackById(id);
-
         res.status(200).json(track);
     }
     catch (err) {
@@ -163,7 +205,7 @@ router.get("/track/:id", async (req, res, next) => {
 });
 
 // GET BY NAME (use query param)
-router.get("/trackByName", async (req, res, next) => {
+router.get("/trackByName", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const track = await AdminServices.getTrackByName(name);
@@ -176,7 +218,7 @@ router.get("/trackByName", async (req, res, next) => {
 });
 
 
-router.put("/track/:id", async (req, res, next) => {
+router.put("/track/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -194,7 +236,7 @@ router.put("/track/:id", async (req, res, next) => {
 });
 
 
-router.delete("/track/:id", async (req, res, next) => {
+router.delete("/track/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteTrack(id);
@@ -605,6 +647,81 @@ router.delete("/Region/:id", async (req, res, next) => {
         next(err);
     }
 });
+
+/////////////////////////////////////Statistics//////////////////////////////////
+
+router.post("/addMarketDemand", async (req, res, next) => {     
+    try {
+        const { trackId, regionId, demandPercentage } = req.body;
+        const marketDemand = await AdminServices.addMarketDemand({ trackId, regionId, demandPercentage });
+
+        res.status(201).json({
+            message: "Market Demand added successfully",
+            data: marketDemand
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+router.get("/marketDemand/track/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const statistics = await AdminServices.getTrackStatistics(id);
+        res.status(200).json(statistics);
+    } catch (error) {
+        next(error);
+    }
+}
+);
+
+router.get("/marketDemand/region/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const statistics = await AdminServices.getRegionStatistics(id);
+        res.status(200).json(statistics);
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/marketDemandByRegionAndTrack", async (req, res, next) => {
+    try {
+        const { regionId, trackId } = req.query;
+        const marketDemand = await AdminServices.getMarketDemandByRegionAndTrack(regionId, trackId);
+        res.status(200).json(marketDemand);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+router.put("/marketDemand/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+        const updated = await AdminServices.updateMarketDemand(id, updates);
+        res.status(200).json({
+            message: "Market Demand updated successfully",
+            data: updated
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.delete("/marketDemand/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deleted = await AdminServices.deleteMarketDemand(id);
+        res.status(200).json({
+            message: "Market Demand deleted successfully",
+            deleted
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 //////////////////////////////Quizess/////////////////////////////
 
