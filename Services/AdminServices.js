@@ -199,6 +199,14 @@ async function getTechnologyByTrackId(trackId) {
     return await TechnologyRepo.getTechnologyByTrackId(trackId);
 }
 
+async function linkTechnologyToTrack(technologyId, trackId) {
+    try {
+        return await TechnologyRepo.linkTechnologyToTrack(technologyId, trackId);
+    } catch (error) {
+        throw new Error(`Error linking technology to track: ${error.message}`);
+        }
+    }
+
 async function getTechnologyByName(name) {
     return await TechnologyRepo.getTechnologyByName(name);
 }
@@ -493,6 +501,7 @@ module.exports = {
     getTechnologyById,
     getTechnologyByName,
     getTechnologyByTrackId,
+    linkTechnologyToTrack,
     updateTechnology,
     deleteTechnology,
     createSource,

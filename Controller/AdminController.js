@@ -255,7 +255,7 @@ router.delete("/track/:id", verifyToken, authorize("admin"), async (req, res, ne
 ///////////////////////////////Topics/////////////////////////////
 
 
-router.post("/createTopic", async (req, res, next) => {
+router.post("/createTopic", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { name, description, roadmapId } = req.body;
         const topic = await AdminServices.createTopic({ name, description, roadmapId });
@@ -270,7 +270,7 @@ router.post("/createTopic", async (req, res, next) => {
     }
 });
 
-router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
+router.get("/TopicsByRoadmap/:roadmapId", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { roadmapId } = req.params;
         const topics = await AdminServices.getTopicsByRoadmapId(roadmapId);
@@ -283,7 +283,7 @@ router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
 });
 
 
-router.get("/Topics", async (req, res, next) => {
+router.get("/Topics", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const topics = await AdminServices.getAllTopics();
         res.status(200).json(topics);
@@ -295,7 +295,7 @@ router.get("/Topics", async (req, res, next) => {
 
 
 // GET BY ID
-router.get("/Topic/:id", async (req, res, next) => {
+router.get("/Topic/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const topic = await AdminServices.getTopicById(id);
@@ -308,7 +308,7 @@ router.get("/Topic/:id", async (req, res, next) => {
 });
 
 // GET BY NAME (use query param)
-router.get("/TopicByName", async (req, res, next) => {
+router.get("/TopicByName", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const topic = await AdminServices.getTopicByName(name);
@@ -321,7 +321,7 @@ router.get("/TopicByName", async (req, res, next) => {
 });
 
 
-router.put("/Topic/:id", async (req, res, next) => {
+router.put("/Topic/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -339,7 +339,7 @@ router.put("/Topic/:id", async (req, res, next) => {
 });
 
 
-router.delete("/Topic/:id", async (req, res, next) => {
+router.delete("/Topic/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteTopic(id);
@@ -396,6 +396,21 @@ router.get("/Technology/:id", async (req, res, next) => {
     }
 });
 
+router.post("/linkTechnologyTrack", async (req, res, next) => {
+    try {
+        const { trackId, technologyId } = req.body; 
+
+        const result = await AdminServices.linkTechnologyToTrack(technologyId, trackId);
+
+        if(!result) {
+            return res.status(404).json({ message: "Track or Technology not found" });
+        }
+
+        res.status(200).json({ message: "Technology linked to Track successfully", data: result });
+    } catch (error) {
+        next(error);
+    }
+});
 router.get("/TechnologyTrackId/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
