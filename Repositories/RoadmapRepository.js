@@ -1,5 +1,5 @@
  const db = require("../models");
-const { Sequelize, Roadmap } = db;
+const { Sequelize, Roadmap, Topic, UserContribution, User } = db;
 const { Op } = require("sequelize");
 
 async function createRoadmap(data) {
@@ -93,8 +93,134 @@ async function getRoadmapByName(name) {
         throw new Error("Roadmap Not Found " + Error.message);
     }
 }
+// async function getRoadmapsDetails() {
+//     try {
+//         const roadmaps = await Roadmap.findAll({
+//     attributes: [
+//       'id',
+//       'name',
+
+//       // topics count
+//       [
+//         Sequelize.fn(
+//           'COUNT',
+//           Sequelize.fn('DISTINCT', Sequelize.col('Topics.id'))
+//         ),
+//         'topicsCount'
+//       ],
+
+//       // contributions count
+//       [
+//         Sequelize.fn(
+//           'COUNT',
+//           Sequelize.fn('DISTINCT', Sequelize.col('Topics->Contributions.id'))
+//         ),
+//         'contributionsCount'
+//       ],
+
+//       // enrolled users count
+//       [
+//         Sequelize.fn(
+//           'COUNT',
+//           Sequelize.fn('DISTINCT', Sequelize.col('Users.id'))
+//         ),
+//         'enrollmentsCount'
+//       ]
+//     ],
+
+//     include: [
+//       {
+//         model: Topic,
+//         attributes: [],
+//         include: [
+//           {
+//             model: Contribution,
+//             attributes: []
+//           }
+//         ]
+//       },
+//       {
+//         model: User,
+//         attributes: [],
+//         through: { attributes: [] } // SavedRoadmaps
+//       }
+//     ],
+
+//     group: ['Roadmap.id', 'Roadmap.name'],
+//     subQuery: false
+//   });
+
+//   return roadmaps;
+//     } catch (error) {
+//         console.error("Error fetching roadmap details:", error);
+//         throw new Error("Failed to fetch roadmap details");
+//     }
+// }
+
 
 // SEARCH
+
+async function getRoadmapsDetails() {
+  try {
+    const roadmaps = await Roadmap.findAll({
+      attributes: ['id', 'name']
+    });
+
+    const result = await Promise.all(
+      roadmaps.map(async (roadmap) => {
+
+        // 1️⃣ Count Topics directly
+        const topicsCount = await Topic.count({
+          where: { roadmapId: roadmap.id }
+        });
+
+        console.log(`Roadmap ID ${roadmap.id} - Topics Count:`, topicsCount); // Debugging log
+
+        // 2️⃣ Count Contributions through Topics
+        const contributionsCount = await UserContribution.count({
+            include: [{
+                model: Topic,
+                as: "topic",   // 🔥 VERY IMPORTANT
+                required: true,
+                where: { roadmapId: roadmap.id },
+                attributes: []
+            }]
+            });
+
+            console.log(`Roadmap ID ${roadmap.id} - Contributions Count:`, contributionsCount); // Debugging log
+
+        // 3️⃣ Count Enrollments (Many-to-Many)
+        const enrollmentsCount = await User.count({
+          include: [{
+            model: Roadmap,
+            as: "savedRoadmaps",
+            required: true,
+            where: { id: roadmap.id },
+            attributes: [],
+            through: { attributes: [] }
+          }]
+        });
+        console.log(`Roadmap ID ${roadmap.id} - Enrollments Count:`, enrollmentsCount); // Debugging log
+
+        return {
+          id: roadmap.id,
+          name: roadmap.name,
+          topicsCount,
+          contributionsCount,
+          enrollmentsCount
+        };
+      })
+    );
+
+    return result;
+
+  } catch (error) {
+    console.error("REAL ERROR:", error);
+    throw error;
+  }
+}
+
+
 async function searchRoadmaps(search) {
     try{
         return await Roadmap.findAll({
@@ -231,6 +357,7 @@ async function deleteRoadmap(id) {
 module.exports = {
     createRoadmap,
     getAllRoadmaps,
+    getRoadmapsDetails,
     getRoadmapById,
     getRoadmapWithTopicsById,
     getRoadmapByName,

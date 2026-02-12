@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
     const MarketDemand = sequelize.define("MarketDemand", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
         demandPercentage : {
             type: DataTypes.DECIMAL,
             allowNull: false,

@@ -15,6 +15,7 @@ module.exports = function verifyToken(req, res, next) {
 
         next();
     } catch (error) {
+        console.log(error.name); 
         return res.status(401).json({ message: "Invalid token" });
     }
 };

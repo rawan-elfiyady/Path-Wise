@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const AdminServices = require("../Services/AdminServices");
 const verifyToken = require("../Middlewares/verifyToken");
-const authorize = require("../Middlewares/Authorize")
+const authorize = require("../Middlewares/auth")
 
 // CREATE ROADMAP
 router.post("/createRoadmap",verifyToken, authorize("admin"), async (req, res, next) => {
@@ -30,6 +30,14 @@ router.get("/roadmaps", verifyToken, authorize("admin"), async (req, res, next) 
         next(err);
     }
 });
+
+router.get("/roadmapsDetails", async (req, res, next) => {
+try {
+const roadmaps = await AdminServices.getRoadmapsDetails();
+res.status(200).json(roadmaps);
+} catch (err) {
+next(err);
+}});
 
 router.get("/roadmapWithTopics/:id", verifyToken, authorize("admin"), async(req, res, next) => {
     try{
@@ -472,7 +480,7 @@ router.delete("/Technology/:id", verifyToken, authorize("admin"), async (req, re
 
 ///////////////////////////////Sources////////////////////////////////////\
 
-router.post("/createSource", async (req, res, next) => {
+router.post("/createSource", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { name, category, link, topicId } = req.body;
         const source = await AdminServices.createSource({ name, category, link, topicId });
@@ -487,7 +495,7 @@ router.post("/createSource", async (req, res, next) => {
 });
 
 
-router.get("/Sources", async (req, res, next) => {
+router.get("/Sources", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const sources = await AdminServices.getAllSources();
         res.status(200).json(sources);
@@ -497,7 +505,7 @@ router.get("/Sources", async (req, res, next) => {
 });
 
 
-router.get("/Source/:id", async (req, res, next) => {
+router.get("/Source/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const source = await AdminServices.getSourceById(id);
@@ -508,7 +516,7 @@ router.get("/Source/:id", async (req, res, next) => {
 });
 
 
-router.get("/SourceByName", async (req, res, next) => {
+router.get("/SourceByName", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const source = await AdminServices.getSourceByName(name);
@@ -519,7 +527,7 @@ router.get("/SourceByName", async (req, res, next) => {
 });
 
 
-router.get("/SourceTopic/:topicId", async (req, res, next) => {
+router.get("/SourceTopic/:topicId", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const topicId = req.params.topicId;
         const sources = await AdminServices.getSourcesByTopicId(topicId);
@@ -530,7 +538,7 @@ router.get("/SourceTopic/:topicId", async (req, res, next) => {
 });
 
 
-router.put("/Source/:id", async (req, res, next) => {
+router.put("/Source/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -546,7 +554,7 @@ router.put("/Source/:id", async (req, res, next) => {
 });
 
 
-router.delete("/Source/:id", async (req, res, next) => {
+router.delete("/Source/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteSource(id);
@@ -564,7 +572,7 @@ router.delete("/Source/:id", async (req, res, next) => {
 /////////////////////////////////Regions///////////////////////////////
 
 
-router.post("/createRegion", async (req, res, next) => {
+router.post("/createRegion", verifyToken, authorize("admin"),  async (req, res, next) => {
     try {
         const { name } = req.body;
         const region = await AdminServices.createRegion({ name });
@@ -580,7 +588,7 @@ router.post("/createRegion", async (req, res, next) => {
 });
 
 
-router.get("/Regions", async (req, res, next) => {
+router.get("/Regions", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const regions = await AdminServices.getAllRegions();
         res.status(200).json(regions);
@@ -591,7 +599,7 @@ router.get("/Regions", async (req, res, next) => {
 });
 
 
-router.get("/Region/:id", async (req, res, next) => {
+router.get("/Region/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const region = await AdminServices.getRegionById(id);
@@ -604,7 +612,7 @@ router.get("/Region/:id", async (req, res, next) => {
 });
 
 
-router.get("/RegionTrackId/:id", async (req, res, next) => {
+router.get("/RegionTrackId/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const regions = await AdminServices.getRegionByTrackId(id);
@@ -617,7 +625,7 @@ router.get("/RegionTrackId/:id", async (req, res, next) => {
 });
 
 
-router.get("/RegionByName", async (req, res, next) => {
+router.get("/RegionByName", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const region = await AdminServices.getRegionByName(name);
@@ -630,7 +638,7 @@ router.get("/RegionByName", async (req, res, next) => {
 });
 
 
-router.put("/Region/:id", async (req, res, next) => {
+router.put("/Region/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -648,7 +656,7 @@ router.put("/Region/:id", async (req, res, next) => {
 });
 
 
-router.delete("/Region/:id", async (req, res, next) => {
+router.delete("/Region/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteRegion(id);
@@ -665,7 +673,7 @@ router.delete("/Region/:id", async (req, res, next) => {
 
 /////////////////////////////////////Statistics//////////////////////////////////
 
-router.post("/addMarketDemand", async (req, res, next) => {     
+router.post("/addMarketDemand", verifyToken, authorize("admin"), async (req, res, next) => {     
     try {
         const { trackId, regionId, demandPercentage } = req.body;
         const marketDemand = await AdminServices.addMarketDemand({ trackId, regionId, demandPercentage });
@@ -678,7 +686,7 @@ router.post("/addMarketDemand", async (req, res, next) => {
         next(error);
     }
 });
-router.get("/marketDemand/track/:id", async (req, res, next) => {
+router.get("/marketDemand/track/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const statistics = await AdminServices.getTrackStatistics(id);
@@ -689,7 +697,7 @@ router.get("/marketDemand/track/:id", async (req, res, next) => {
 }
 );
 
-router.get("/marketDemand/region/:id", async (req, res, next) => {
+router.get("/marketDemand/region/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const statistics = await AdminServices.getRegionStatistics(id);
@@ -699,7 +707,7 @@ router.get("/marketDemand/region/:id", async (req, res, next) => {
     }
 });
 
-router.get("/marketDemandByRegionAndTrack", async (req, res, next) => {
+router.get("/marketDemandByRegionAndTrack", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { regionId, trackId } = req.query;
         const marketDemand = await AdminServices.getMarketDemandByRegionAndTrack(regionId, trackId);
@@ -710,7 +718,7 @@ router.get("/marketDemandByRegionAndTrack", async (req, res, next) => {
 });
 
 
-router.put("/marketDemand/:id", async (req, res, next) => {
+router.put("/marketDemand/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -724,7 +732,7 @@ router.put("/marketDemand/:id", async (req, res, next) => {
     }
 });
 
-router.delete("/marketDemand/:id", async (req, res, next) => {
+router.delete("/marketDemand/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteMarketDemand(id);
@@ -741,7 +749,7 @@ router.delete("/marketDemand/:id", async (req, res, next) => {
 //////////////////////////////Quizess/////////////////////////////
 
 
-router.post("/createQuiz", async (req, res, next) => {
+router.post("/createQuiz", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { name, numOfQuestions, grade, entityType, entityId } = req.body;
         const quiz = await AdminServices.createQuiz({ name, numOfQuestions, grade, entityType, entityId });
@@ -756,7 +764,7 @@ router.post("/createQuiz", async (req, res, next) => {
 });
 
 
-router.get("/Quizzes", async (req, res, next) => {
+router.get("/Quizzes", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const quizzes = await AdminServices.getAllQuizzes();
         res.status(200).json(quizzes);
@@ -766,7 +774,7 @@ router.get("/Quizzes", async (req, res, next) => {
 });
 
 
-router.get("/Quiz/:id", async (req, res, next) => {
+router.get("/Quiz/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const quiz = await AdminServices.getQuizById(id);
@@ -777,7 +785,7 @@ router.get("/Quiz/:id", async (req, res, next) => {
 });
 
 
-router.get("/QuizByEntity", async (req, res, next) => {
+router.get("/QuizByEntity", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { type, id } = req.query; 
         const quizzes = await AdminServices.getQuizzesByEntity(type, id);
@@ -787,17 +795,17 @@ router.get("/QuizByEntity", async (req, res, next) => {
     }
 });
 
-router.get("/QuizByName", async (req, res, next) => {
+router.get("/QuizByName", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const name = req.query.name;
-        const quiz = await AdminQuizServices.getQuizByName(name);
+        const quiz = await AdminServices.getQuizByName(name);
         res.status(200).json(quiz);
     } catch (error) {
         next(error);
     }
 });
 
-router.put("/Quiz/:id", async (req, res, next) => {
+router.put("/Quiz/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -813,7 +821,7 @@ router.put("/Quiz/:id", async (req, res, next) => {
 });
 
 
-router.delete("/Quiz/:id", async (req, res, next) => {
+router.delete("/Quiz/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await AdminServices.deleteQuiz(id);
@@ -830,7 +838,7 @@ router.delete("/Quiz/:id", async (req, res, next) => {
 
 
 // CREATE
-router.post("/createQuestion", async (req, res, next) => {
+router.post("/createQuestion", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { question, answer, degree, quizId } = req.body;
         const Question = await AdminServices.createQuestion({question, answer, degree, quizId});
@@ -845,7 +853,7 @@ router.post("/createQuestion", async (req, res, next) => {
 });
 
 // GET ALL
-router.get("/Questions", async (req, res, next) => {
+router.get("/Questions", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const questions = await AdminServices.getAllQuestions();
         res.status(200).json(questions);
@@ -855,7 +863,7 @@ router.get("/Questions", async (req, res, next) => {
 });
 
 // GET BY ID
-router.get("/Question/:id", async (req, res, next) => {
+router.get("/Question/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const question = await AdminServices.getQuestionById(id);
@@ -867,7 +875,7 @@ router.get("/Question/:id", async (req, res, next) => {
 });
 
 // GET BY QUIZ ID
-router.get("/QuestionsByQuiz/:quizId", async (req, res, next) => {
+router.get("/QuestionsByQuiz/:quizId", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const quizId = req.params.quizId;
         const list = await AdminServices.getQuestionsByQuizId(quizId);
@@ -879,7 +887,7 @@ router.get("/QuestionsByQuiz/:quizId", async (req, res, next) => {
 });
 
 // GET BY QUESTION TEXT
-router.get("/QuestionByText", async (req, res, next) => {
+router.get("/QuestionByText", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const text = req.query.question;
         const question = await AdminServices.getQuestionByText(text);
@@ -891,7 +899,7 @@ router.get("/QuestionByText", async (req, res, next) => {
 });
 
 // UPDATE
-router.put("/Question/:id", async (req, res, next) => {
+router.put("/Question/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -907,7 +915,7 @@ router.put("/Question/:id", async (req, res, next) => {
 });
 
 // DELETE
-router.delete("/Question/:id", async (req, res, next) => {
+router.delete("/Question/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
 
@@ -926,7 +934,7 @@ router.delete("/Question/:id", async (req, res, next) => {
 
 
 // GET ALL USERS
-router.get("/users", async (req, res, next) => {
+router.get("/users", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const users = await AdminServices.getAllUsers();
         res.status(200).json(users);
@@ -937,7 +945,7 @@ router.get("/users", async (req, res, next) => {
 
 
 // GET USER BY ID
-router.get("/user/:id", async (req, res, next) => {
+router.get("/user/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const user = await AdminServices.getUserById(id);
@@ -950,7 +958,7 @@ router.get("/user/:id", async (req, res, next) => {
 
 
 // UPDATE USER
-router.put("/user/:id", async (req, res, next) => {
+router.put("/user/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -969,7 +977,7 @@ router.put("/user/:id", async (req, res, next) => {
 
 
 // DELETE USER
-router.delete("/user/:id", async (req, res, next) => {
+router.delete("/user/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
 
@@ -988,7 +996,7 @@ router.delete("/user/:id", async (req, res, next) => {
 //-----------------------------------UserContribution-------------------------------//
 
 // GET ALL CONTRIBUTIONS
-router.get("/contributions", async (req, res, next) => {
+router.get("/contributions", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const contributions = await AdminServices.getAllContributions();
         res.status(200).json(contributions);
@@ -998,7 +1006,7 @@ router.get("/contributions", async (req, res, next) => {
 });
 
 // GET CONTRIBUTION BY ID
-router.get("/contribution/:id", async (req, res, next) => {
+router.get("/contribution/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const contribution = await AdminServices.getUserContribution(id);
@@ -1009,8 +1017,38 @@ router.get("/contribution/:id", async (req, res, next) => {
     }
 });
 
+router.get("/contributionsByUser/:userId", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const contributions = await AdminServices.getUserContribution(userId);
+        res.status(200).json(contributions);
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/contributionsByTopic/:topicId", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const topicId = req.params.topicId;
+        const contributions = await AdminServices.getContributionsByTopicId(topicId);
+        res.status(200).json(contributions);
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/contributionsByStatus", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const status = req.query.status;
+        const contributions = await AdminServices.getContributionByStatus(status);
+        res.status(200).json(contributions);
+    } catch (error) {
+        next(error);
+    }
+});
+
 // APPROVE CONTRIBUTION
-router.put("/contribution/:id/approve", async (req, res, next) => {
+router.put("/contribution/:id/approve", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         await AdminServices.approveContribution(id);
@@ -1024,7 +1062,7 @@ router.put("/contribution/:id/approve", async (req, res, next) => {
 });
 
 // REJECT CONTRIBUTION
-router.put("/contribution/:id/reject", async (req, res, next) => {
+router.put("/contribution/:id/reject", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         await AdminServices.rejectContribution(id);
@@ -1038,7 +1076,7 @@ router.put("/contribution/:id/reject", async (req, res, next) => {
 });
 
 // DELETE CONTRIBUTION
-router.delete("/contribution/:id", async (req, res, next) => {
+router.delete("/contribution/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         await AdminServices.deleteContribution(id);

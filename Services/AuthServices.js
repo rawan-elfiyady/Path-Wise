@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv").config();
 
 const UserRepo = require("../Repositories/UserRepository");
 
@@ -28,7 +29,7 @@ async function signUp({name, email, password}) {
             email: user.email,
             role: user.role
         },
-        "secret",
+        process.env.JWT_SECRET,
         { expiresIn: "1h" }
     );
 
@@ -61,7 +62,7 @@ async function createAdmin({name, email, password}) {
         email: user.email,
         role: user.role
     },
-    "secret",
+    process.env.JWT_SECRET,
     {expiresIn: "1h"}
 );
   return {
@@ -93,7 +94,7 @@ async function login({email, password}) {
         email: existingUser.email,
         role: existingUser.role
     },
-    "secret",
+    process.env.JWT_SECRET,
     {expiresIn: "1h"}
 );
 

@@ -5,6 +5,10 @@ const { Op } = require("sequelize");
 // CREATE
 async function createQuiz(data) {
     try {
+        const existingQuiz = await Quiz.findOne({ where: { name: data.name } });
+        if (existingQuiz) {
+            throw new Error("Quiz with this name already exists");
+        }
         console.log("Data to insert:", data);
 
         const quiz = await Quiz.create({
@@ -24,32 +28,72 @@ async function createQuiz(data) {
 
 // GET BY ID
 async function getQuizById(id) {
-    return await Quiz.findByPk(id);
+    try {
+        const quiz = await Quiz.findByPk(id);
+        if (!quiz) {
+            throw new Error("Quiz not found");
+        }
+        return quiz;
+    } catch (error) {
+        throw new Error("Failed to retrieve quiz: " + error.message);
+    }
 }
 
 // GET BY NAME
 async function getQuizByName(name) {
-    return await Quiz.findOne({ where: { name } });
+    try {
+        const quiz = await Quiz.findOne({ where: { name } });
+        if (!quiz) {
+            throw new Error("Quiz not found");
+        }
+        return quiz;
+    } catch (error) {
+        throw new Error("Failed to retrieve quiz: " + error.message);
+    }
 }
 
 // GET ALL
 async function getAllQuizzes() {
-    return await Quiz.findAll();
+    try {
+        const quizzes = await Quiz.findAll();
+            if (!quizzes || quizzes.length === 0) {
+                throw new Error("No quizzes found");
+            }
+            return quizzes;
+    } catch (error) {
+        throw new Error("Failed to retrieve quizzes: " + error.message);
+    }
 }
 
 // GET QUIZZES BY Track or Topic (dynamic)
 async function getQuizzesByEntity(entityType, entityId) {
-    return await Quiz.findAll({
-        where: { entityType, entityId },
-        include: [
-            { model: Question, as: "questions" }
-        ]
-    });
+    try {
+        const validEntityTypes = ["track", "topic"];
+        if (!validEntityTypes.includes(entityType)) {
+            throw new Error("Invalid entity type. Must be 'track' or 'topic'.");
+        }
+        const quizzes = await Quiz.findAll({
+            where: { entityType, entityId },
+            include: [
+                { model: Question, as: "questions" }
+            ]
+        });
+        if (!quizzes || quizzes.length === 0) {
+            throw new Error("No quizzes found for the specified entity");
+        }
+        return quizzes;
+    } catch (error) {
+        throw new Error("Failed to retrieve quizzes by entity: " + error.message);
+    }
 }
 
 // UPDATE
 async function updateQuiz(id, updates) {
     try {
+        const quiz = await Quiz.findByPk(id);
+        if (!quiz) {
+            throw new Error("Quiz not found");
+        }
         await Quiz.update(updates, { where: { id } });
         return await Quiz.findByPk(id);
     } catch (error) {
@@ -61,6 +105,10 @@ async function updateQuiz(id, updates) {
 // DELETE
 async function deleteQuiz(id) {
     try {
+        const quiz = await Quiz.findByPk(id);
+        if (!quiz) {
+            throw new Error("Quiz not found");
+        }
         return await Quiz.destroy({ where: { id } });
     } catch (error) {
         console.error("Error deleting quiz:", error);

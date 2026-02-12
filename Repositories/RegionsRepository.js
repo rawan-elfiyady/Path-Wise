@@ -4,6 +4,10 @@ const { Op } = require("sequelize");
 
 async function createRegion(data) {
     try {
+        const existingRegion = await Region.findOne({ where: { name: data.name } });
+        if (existingRegion) {
+            throw new Error("Region with this name already exists.");
+        }
         console.log("Data to insert:", data);
 
         const region = await Region.create({
@@ -19,35 +23,76 @@ async function createRegion(data) {
 
 
 async function getRegionById(id) {
-    return await Region.findByPk(id);
+    try {
+        const region = await Region.findByPk(id);
+        if (!region) {
+            throw new Error("Region not found with ID: " + id);
+        }
+        return region;
+    } catch (error) {
+        console.error("Error fetching region by ID:", error);
+        throw error;
+    }
 }
 
 
 async function getRegionByName(name) {
-    return await Region.findOne({ where: { name } });
-}
+    try {
+        const region = await Region.findOne({ where: { name } });
+        if (!region) {
+            throw new Error("Region not found with name: " + name);
+        }
+        return region;
+    } catch (error) {
+        console.error("Error fetching region by name:", error);
+        throw error;
+    }
+    }
 
 
 async function getRegionByTrackId(trackId) {
-    return await Region.findAll({
-        include: [
-            {
-                association: "Tracks",
-                where: { id: trackId },
-                attributes: []
-            }
-        ]
-    });
+    try {
+        const trackExists = await db.Track.findByPk(trackId);
+        if (!trackExists) {
+            throw new Error("Track not found with ID: " + trackId);
+        }
+
+        return await Region.findAll({
+            include: [
+                {
+                    association: "Tracks",
+                    where: { id: trackId },
+                    attributes: []
+                }
+            ]
+        });
+    } catch (error) {
+        console.error("Error fetching regions by track ID:", error);
+        throw error;
+    }
 }
 
 
 async function getAllRegions() {
-    return await Region.findAll();
+    try {
+        const regions = await Region.findAll();
+        if (regions.length === 0) {
+            throw new Error("No regions found.");
+        }
+        return regions;
+    } catch (error) {
+        console.error("Error fetching all regions:", error);
+        throw error;
+    }
 }
 
 
 async function updateRegion(id, data) {
     try {
+        const region = await Region.findByPk(id);
+        if (!region) {
+            throw new Error("Region not found with ID: " + id); 
+        }
         await Region.update(data, { where: { id } });
         return await Region.findByPk(id);
     } catch (error) {
@@ -59,6 +104,10 @@ async function updateRegion(id, data) {
 
 async function deleteRegion(id) {
     try {
+        const region = await Region.findByPk(id);
+        if (!region) {
+            throw new Error("Region not found with ID: " + id); 
+        }
         return await Region.destroy({ where: { id } });
     } catch (error) {
         console.error("Error deleting region:", error);

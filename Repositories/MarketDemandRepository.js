@@ -4,10 +4,20 @@ const { Op } = require("sequelize");
 
 async function addMarketDemand(data) {
     try {
+        const regionExists = await db.Region.findByPk(data.regionId);
+        if (!regionExists) {
+            throw new Error("Region not found with ID: " + data.regionId);
+        }
+        const trackExists = await db.Track.findByPk(data.trackId);
+        if (!trackExists) {
+            throw new Error("Track not found with ID: " + data.trackId);
+        }
         const marketDemand = await MarketDemand.create({
             demandPercentage: data.demandPercentage,
-            region: data.region,
-            track: data.track
+            regionId: data.regionId,
+            trackId: data.trackId,
+            region: regionExists.name,
+            track: trackExists.name
         });
         return marketDemand;
     } catch (error) {
@@ -16,12 +26,15 @@ async function addMarketDemand(data) {
     }
 }
 
-async function getTrackStatistics(track) {
+async function getTrackStatistics(trackId) {
     try {
         const statistics = await MarketDemand.findAll({
-            where: { track: track },
+            where: { trackId: trackId },
             attributes: ['region', 'demandPercentage']
         });
+        if (statistics.length === 0) {
+            throw new Error("No market demand data found for track ID: " + trackId);
+        }
         return statistics;
     } catch (error) {
         console.error("Error in getTrackStatistics:", error.message);
@@ -51,6 +64,9 @@ async function getMarketDemandByRegionAndTrack(region, track) {
                 track: track
             }
         });
+        if (!marketDemand) {
+            throw new Error("Market demand entry not found for region: " + region + " and track: " + track);
+        }
         return marketDemand;
     } catch (error) {
         console.error("Error in getMarketDemandByRegionAndTrack:", error.message);

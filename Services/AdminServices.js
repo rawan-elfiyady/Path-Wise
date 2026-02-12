@@ -23,6 +23,10 @@ async function createRoadmap(data) {
     }
 }
 
+async function getRoadmapsDetails() {
+    return await RoadmapRepo.getRoadmapsDetails();
+}
+
 async function getAllRoadmaps() {
     return await RoadmapRepo.getAllRoadmaps();
 }
@@ -451,8 +455,18 @@ async function getAllContributions() {
     return await ContributionRepo.getAllContributions();
 }
 
-async function getUserContribution(id) {
+async function getContributionById(id) {
     return await ContributionRepo.getContributionById(id);
+}
+
+async function getUserContribution(userId) {
+    return await ContributionRepo.getContributionsByUserId(userId);
+}
+async function getContributionsByTopicId(topicId) {
+    return await ContributionRepo.getContributionsByTopicId(topicId);
+}
+async function getContributionByStatus(status) {
+    return await ContributionRepo.getContributionByStatus(status);
 }
 
 async function approveContribution(id) {
@@ -474,6 +488,7 @@ module.exports = {
     createRoadmap,
     getAllRoadmaps,
     getRoadmapById,
+    getRoadmapsDetails,
     getRoadmapByName,
     getRoadmapsWithTopicsById,
     searchRoadmaps,
@@ -543,6 +558,9 @@ module.exports = {
     updateUser,
     deleteUser,
     getAllContributions,
+    getContributionById,
+    getContributionsByTopicId,
+    getContributionByStatus,
     getUserContribution,
     approveContribution,
     rejectContribution,

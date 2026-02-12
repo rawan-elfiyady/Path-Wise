@@ -84,6 +84,11 @@ async function updateUser(id, updatedFields) {
 
 async function deleteUser(id) {
     try {
+        const user = await User.findByPk(id);
+
+        if (!user) {
+            return { message: "User not found" };
+        }
         return await User.destroy({ where: { id } });
     } catch (error) {
         console.error("Error deleting user:", error);
