@@ -480,7 +480,7 @@ router.delete("/Technology/:id", verifyToken, authorize("admin"), async (req, re
 
 ///////////////////////////////Sources////////////////////////////////////\
 
-router.post("/createSource", verifyToken, authorize("admin"), async (req, res, next) => {
+router.post("/createSource", async (req, res, next) => {
     try {
         const { name, category, link, topicId } = req.body;
         const source = await AdminServices.createSource({ name, category, link, topicId });
@@ -495,7 +495,7 @@ router.post("/createSource", verifyToken, authorize("admin"), async (req, res, n
 });
 
 
-router.get("/Sources", verifyToken, authorize("admin"), async (req, res, next) => {
+router.get("/Sources",  async (req, res, next) => {
     try {
         const sources = await AdminServices.getAllSources();
         res.status(200).json(sources);
@@ -505,7 +505,7 @@ router.get("/Sources", verifyToken, authorize("admin"), async (req, res, next) =
 });
 
 
-router.get("/Source/:id", verifyToken, authorize("admin"), async (req, res, next) => {
+router.get("/Source/:id",  async (req, res, next) => {
     try {
         const id = req.params.id;
         const source = await AdminServices.getSourceById(id);
@@ -527,7 +527,7 @@ router.get("/SourceByName", verifyToken, authorize("admin"), async (req, res, ne
 });
 
 
-router.get("/SourceTopic/:topicId", verifyToken, authorize("admin"), async (req, res, next) => {
+router.get("/SourceTopic/:topicId", async (req, res, next) => {
     try {
         const topicId = req.params.topicId;
         const sources = await AdminServices.getSourcesByTopicId(topicId);
