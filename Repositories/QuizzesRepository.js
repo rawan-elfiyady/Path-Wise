@@ -1,5 +1,4 @@
-const db = require("../models");
-const { Sequelize, Quiz } = db;
+const { Quiz, Question } = require("../models");
 const { Op } = require("sequelize");
 
 // CREATE
@@ -68,24 +67,38 @@ async function getAllQuizzes() {
 // GET QUIZZES BY Track or Topic (dynamic)
 async function getQuizzesByEntity(entityType, entityId) {
     try {
+
+        entityType = entityType.toLowerCase();   
+
         const validEntityTypes = ["track", "topic"];
+
         if (!validEntityTypes.includes(entityType)) {
             throw new Error("Invalid entity type. Must be 'track' or 'topic'.");
         }
+
+        entityType = entityType.charAt(0).toUpperCase() + entityType.slice(1).toLowerCase();
+
         const quizzes = await Quiz.findAll({
             where: { entityType, entityId },
             include: [
-                { model: Question, as: "questions" }
+                {
+                    model: Question,
+                    as: "questions"
+                }
             ]
         });
-        if (!quizzes || quizzes.length === 0) {
+
+        if (!quizzes.length) {
             throw new Error("No quizzes found for the specified entity");
         }
+
         return quizzes;
+
     } catch (error) {
         throw new Error("Failed to retrieve quizzes by entity: " + error.message);
     }
 }
+
 
 // UPDATE
 async function updateQuiz(id, updates) {
