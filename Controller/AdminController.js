@@ -686,6 +686,16 @@ router.post("/addMarketDemand", verifyToken, authorize("admin"), async (req, res
         next(error);
     }
 });
+
+router.get("/marketDemands", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const marketDemands = await AdminServices.getAllMarketDemands();
+        res.status(200).json(marketDemands);
+    } catch (error) {
+        next(error);
+    }
+});
+
 router.get("/marketDemand/track/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;

@@ -26,6 +26,16 @@ async function addMarketDemand(data) {
     }
 }
 
+async function getAllMarketDemands() {
+    try {
+        const marketDemands = await MarketDemand.findAll();
+        return marketDemands;
+    } catch (error) {
+        console.error("Error in getAllMarketDemands:", error.message);
+        throw error;
+    }
+}
+
 async function getTrackStatistics(trackId) {
     try {
         const statistics = await MarketDemand.findAll({
@@ -107,6 +117,7 @@ async function deleteMarketDemand(id) {
 
 module.exports = {
     addMarketDemand,
+    getAllMarketDemands,
     getTrackStatistics,
     getRegionStatistics,
     getMarketDemandByRegionAndTrack,

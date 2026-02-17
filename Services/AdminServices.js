@@ -330,6 +330,11 @@ async function deleteRegion(id) {
 async function addMarketDemand(data) {
     return await MarketDemandRepo.addMarketDemand(data);
 }
+
+async function getAllMarketDemands() {
+    return await MarketDemandRepo.getAllMarketDemands();
+}
+
 async function getTrackStatistics(id){
     return await MarketDemandRepo.getTrackStatistics(id);
 }
@@ -534,6 +539,7 @@ module.exports = {
     updateRegion,
     deleteRegion,
     addMarketDemand,    
+    getAllMarketDemands,
     getTrackStatistics,
     getRegionStatistics,
     getMarketDemandByRegionAndTrack,
