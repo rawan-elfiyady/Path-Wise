@@ -34,7 +34,7 @@ async function getUserByEmail(email) {
 
 async function getAllUsers(){
     try{
-        const users = await User.findAll({ attributes: ["id", "name", "email", "image", "cv"]});
+        const users = await User.findAll({ attributes: ["id", "name", "email", "image", "cv", "role"]});
 
         if(!users){
             throw new Error("No Users Found");
