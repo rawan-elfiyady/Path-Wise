@@ -30,7 +30,7 @@ async function signUp({name, email, password}) {
             role: user.role
         },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "24h" }
     );
 
     return {
@@ -63,7 +63,7 @@ async function createAdmin({name, email, password}) {
         role: user.role
     },
     process.env.JWT_SECRET,
-    {expiresIn: "1h"}
+    {expiresIn: "24h"}
 );
   return {
     token,
@@ -95,7 +95,7 @@ async function login({email, password}) {
         role: existingUser.role
     },
     process.env.JWT_SECRET,
-    {expiresIn: "1h"}
+    {expiresIn: "24h"}
 );
 
 return {
