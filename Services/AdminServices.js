@@ -9,6 +9,7 @@ const QuestionRepo = require("../Repositories/QuestionsRepository");
 const MarketDemandRepo = require("../Repositories/MarketDemandRepository");
 const UserRepo = require("../Repositories/UserRepository");
 const ContributionRepo = require("../Repositories/UserContributionRepository");
+const TrackTechnologiesRepo = require("../Repositories/TrackTechnologiesRepository");
 const db = require("../models");
 const { get } = require("../Controller/AdminController");
 
@@ -227,6 +228,48 @@ async function deleteTechnology(id) {
     }
 }
 
+///////////////////////// TrackTechnologies///////////////////////////
+
+async function getAllTrackTechnologies() {
+    try {
+        const trackTechnologies = await TrackTechnologiesRepo.getAllTrackTechnologies();
+        if (!trackTechnologies) {
+            throw new Error("No track technologies found");
+        }
+        return trackTechnologies;
+    }
+    catch (error) {
+        throw new Error(`Error fetching track technologies: ${error.message}`);
+    }
+}
+
+async function getTechnologiesByTrackId(trackId) {
+    try {
+        const technologyIds = await TrackTechnologiesRepo.getTechnologiesByTrackId(trackId);
+        return technologyIds;
+    }
+    catch (error) {
+        throw new Error(`Error fetching technologies for track ID ${trackId}: ${error.message}`);
+    }
+}
+
+async function updateTrackTechnologies (technologyId, updates ) {
+    try {
+        const technology = await TrackTechnologiesRepo.updateTrackTechnologies(technologyId, updates);
+        return technology;
+    }
+    catch (error) {
+        throw new Error(`Error updating track technology with ID ${technologyId}: ${error.message}`);
+    }   
+}
+
+async function deleteTrackTechnologies(trackId, technologyId) {
+    try {
+        return await TrackTechnologiesRepo.deleteTrackTechnologies(trackId, technologyId);
+    } catch (error) {
+        throw new Error(`Error deleting track technology with ID ${technologyId}: ${error.message}`);
+    }
+}
 /////////////////////////////Sources/////////////////////////////////////
 
 
@@ -524,6 +567,10 @@ module.exports = {
     linkTechnologyToTrack,
     updateTechnology,
     deleteTechnology,
+    getTechnologiesByTrackId,
+    updateTrackTechnologies,
+    deleteTrackTechnologies,
+    getAllTrackTechnologies,
     createSource,
     getAllSources,
     getSourceById,

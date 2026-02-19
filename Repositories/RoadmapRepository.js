@@ -25,7 +25,8 @@ async function createRoadmap(data) {
             where: {
                 name: data.name,
                 entityType: data.entityType,
-                entityId: data.entityId
+                entityId: data.entityId,
+                icon: data.icon
             }
         });
         if (existingRoadmap) {

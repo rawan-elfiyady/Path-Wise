@@ -5,8 +5,6 @@ const { Op } = require("sequelize");
 async function createTechnology(data) {
     try {
         const technologyExists = await Technology.findOne({ where: { name: data.name } });
-
-
         if (technologyExists) {
             throw new Error("Technology with this name already exists");
          }
@@ -16,7 +14,8 @@ async function createTechnology(data) {
             name: data.name,
             description: data.description,
             category: data.category,
-            crashCourse: data.crashCourse
+            crashCourse: data.crashCourse,
+            icon: data.icon,
         });
         return technology;
     } catch (error) {

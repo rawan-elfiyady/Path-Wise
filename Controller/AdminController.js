@@ -7,8 +7,8 @@ const authorize = require("../Middlewares/auth")
 // CREATE ROADMAP
 router.post("/createRoadmap",verifyToken, authorize("admin"), async (req, res, next) => {
     try {
-        const { name, entityType, entityId } = req.body;
-        const roadmap = await AdminServices.createRoadmap({ name, entityType, entityId });
+        const data = req.body;
+        const roadmap = await AdminServices.createRoadmap(data);
 
         res.status(201).json({
             message: "Roadmap created successfully",
@@ -31,7 +31,7 @@ router.get("/roadmaps", verifyToken, authorize("admin"), async (req, res, next) 
     }
 });
 
-router.get("/roadmapsDetails", async (req, res, next) => {
+router.get("/roadmapsDetails",verifyToken, authorize("admin"), async (req, res, next) => {
 try {
 const roadmaps = await AdminServices.getRoadmapsDetails();
 res.status(200).json(roadmaps);
@@ -176,8 +176,8 @@ router.delete("/roadmap/:id", verifyToken, authorize("admin"), async (req, res, 
 
 router.post("/createTrack", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
-        const { name, description, keyConcepts, crashCourse } = req.body;
-        const track = await AdminServices.createTrack({ name, description, keyConcepts, crashCourse });
+        const data = req.body;
+        const track = await AdminServices.createTrack(data);
 
         res.status(201).json({
             message: "Track created successfully",
@@ -364,11 +364,11 @@ router.delete("/Topic/:id", verifyToken, authorize("admin"), async (req, res, ne
 
 
 //////////////////////////Technology///////////////////////////
-
+ 
 router.post("/createTechnology", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
-        const { name, description, category, crashCourse } = req.body;
-        const technology = await AdminServices.createTechnology({ name, description, category, crashCourse });
+        const data = req.body;
+        const technology = await AdminServices.createTechnology(data);
 
         res.status(201).json({
             message: "Technology created successfully",
@@ -478,9 +478,58 @@ router.delete("/Technology/:id", verifyToken, authorize("admin"), async (req, re
     }
 });
 
-///////////////////////////////Sources////////////////////////////////////\
+//////////////////////////////TrackTechnologies///////////////////////////
 
-router.post("/createSource", async (req, res, next) => {
+router.get("/TrackTechnologies", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const trackTechnologies = await AdminServices.getAllTrackTechnologies();
+        res.status(200).json(trackTechnologies);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// router.get("/TechnologiesByTrackId/:id", verifyToken, authorize("admin"), async (req, res, next) => {
+//     try {
+//         const id = req.params.id;
+//         const technologies = await AdminServices.getTechnologiesByTrackId(id);
+//         res.status(200).json(technologies);
+//     }
+//         catch (err) {
+//         next(err);
+//     }
+// });
+
+// router.put("/TrackTechnology/:technologyId", verifyToken, authorize("admin"), async (req, res, next) => {
+//     try {
+//         const technologyId = req.params.technologyId;
+//         const updates = req.body;
+//         const updated = await AdminServices.updateTrackTechnologies(technologyId, updates);
+//         res.status(200).json({
+//             message: "Track technology updated successfully",
+//             data: updated
+//         });
+//     } catch (error) {
+//         next(error);
+//     }
+// });
+
+router.delete("/TrackTechnology", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const { trackId, technologyId } = req.body;
+        await AdminServices.deleteTrackTechnologies(trackId, technologyId);
+        res.status(200).json({
+            message: "Track technology deleted successfully",
+        });
+    } catch (error) { 
+        next(error);
+    }
+});
+
+
+///////////////////////////////Sources////////////////////////////////////
+
+router.post("/createSource", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const { name, category, link, topicId } = req.body;
         const source = await AdminServices.createSource({ name, category, link, topicId });
@@ -495,7 +544,7 @@ router.post("/createSource", async (req, res, next) => {
 });
 
 
-router.get("/Sources",  async (req, res, next) => {
+router.get("/Sources", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const sources = await AdminServices.getAllSources();
         res.status(200).json(sources);
@@ -505,7 +554,7 @@ router.get("/Sources",  async (req, res, next) => {
 });
 
 
-router.get("/Source/:id",  async (req, res, next) => {
+router.get("/Source/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const source = await AdminServices.getSourceById(id);
@@ -527,7 +576,7 @@ router.get("/SourceByName", verifyToken, authorize("admin"), async (req, res, ne
 });
 
 
-router.get("/SourceTopic/:topicId", async (req, res, next) => {
+router.get("/SourceTopic/:topicId", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
         const topicId = req.params.topicId;
         const sources = await AdminServices.getSourcesByTopicId(topicId);

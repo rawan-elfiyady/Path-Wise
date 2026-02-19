@@ -9,7 +9,8 @@ async function createTrack(data) {
             name: data.name,
             description: data.description,
             keyConcepts: data.keyConcepts,
-            crashCourse: data.crashCourse
+            crashCourse: data.crashCourse,
+            icon: data.icon
         });
         return track;
     } catch (error) {
