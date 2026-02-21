@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: "CASCADE",
         });
 
+        QuizGrade.belongsTo(models.TopicProgress, {
+            foreignKey: "topicProgressId",
+            onDelete: "CASCADE",
+        });
+
         QuizGrade.belongsTo(models.User, {
             foreignKey: "userId",
             onDelete: "CASCADE",

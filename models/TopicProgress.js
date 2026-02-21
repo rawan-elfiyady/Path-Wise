@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
             as: "roadmap",
         });
 
+        TopicProgress.hasMany(models.QuizGrade, {
+            foreignKey: "topicProgressId",
+            as: "quizGrades",
+        });
+
         TopicProgress.belongsTo(models.Topic, {
             foreignKey: "topicId",
             as: "mainTopic",

@@ -6,6 +6,24 @@ const { SavedRoadmap, TopicProgress, sequelize } = db;
 // CREATE
 async function createSavedRoadmap(data) {
     try {
+        const roadmap = await db.Roadmap.findByPk(data.roadmapId, {
+            include: {
+                model: db.Topic,
+            }
+        });
+        if (!roadmap) {
+            throw new Error("Roadmap not found");
+        }
+        const existing = await SavedRoadmap.findOne({
+            where: {
+                userId: data.userId,
+                roadmapId: data.roadmapId
+            }
+        });
+        if (existing) {
+            throw new Error("SavedRoadmap already exists for this user and roadmap.");
+        }
+
         console.log("Data to insert:", data);
 
         const savedRoadmap = await SavedRoadmap.create({
@@ -15,6 +33,14 @@ async function createSavedRoadmap(data) {
             progressPercentage: data.progressPercentage 
         });
 
+            const topicProgressEntries = roadmap.Topics.map(topic => ({
+                savedRoadmapId: savedRoadmap.id,
+                topicId: topic.id,
+                status: "Pending"
+            }));
+
+        await TopicProgress.bulkCreate(topicProgressEntries);
+            
         return savedRoadmap;
 
     } catch (error) {
