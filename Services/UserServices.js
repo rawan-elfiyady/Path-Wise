@@ -7,6 +7,7 @@ const SourceRepo = require("../Repositories/SourcesRepository");
 const RegionsRepository = require("../Repositories/RegionsRepository");
 const QuizRepo = require("../Repositories/QuizzesRepository");
 const QuestionsRepo = require("../Repositories/QuestionsRepository");
+const QuizGradeAnswerRepo = require("../Repositories/QuizGradeAnswerRepository");
 const UserRepo = require("../Repositories/UserRepository");
 const ContributionRepo = require("../Repositories/UserContributionRepository");
 const SavedRoadmapRepository = require("../Repositories/SavedRoadmapRepository");
@@ -283,6 +284,32 @@ async function getQuizByName(name) {
     return await QuizRepo.getQuizByName(name);
 }
 
+async function submitQuiz(data) {
+    try {
+        return await QuizGradeAnswerRepo.attendQuiz(data);
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+async function getQuizGradeById(id) {
+    try {
+        const quizGrade = await QuizGradeAnswerRepo.getQuizGradeById(id);
+        return quizGrade;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
+async function getQuizGradesByUserId(userId) {
+    try {
+        const quizGrades = await QuizGradeAnswerRepo.getQuizGradesByUserId(userId);
+        return quizGrades;
+    } catch (error) {   
+             throw new Error(error.message);
+    }
+}
+
 //////////////////////////////////Questions///////////////////////////
 
 
@@ -398,6 +425,9 @@ module.exports = {
     getQuizById,
     getQuizzesByEntity,
     getQuizByName,
+    submitQuiz,
+    getQuizGradeById,
+    getQuizGradesByUserId,
     getQuestionsByQuizId,
     getQuestionById,
     registerUser,

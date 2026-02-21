@@ -1,10 +1,21 @@
 const express = require("express");
 const router = express.Router();
 const UserServices = require("../Services/UserServices");
+const AIServices = require("../Services/AIServices");
 const UserRepo = require("../Repositories/UserRepository");
 const verifyToken = require("../Middlewares/verifyToken"); 
 
+/////////////////////// AI RECOMMENDATION //////////////////////
 
+router.post("/aiConsultation", async (req, res, next) => {
+    try {
+        const data = req.body;
+        const recommendation = await AIServices.getAIRecommendation(data);
+        res.status(200).json(recommendation);
+    } catch (error) {
+        next(error);
+    }   
+});
 
 //////////////////////////////////ROADMAPS///////////////////////////////
 
@@ -589,6 +600,44 @@ router.get("/Question/:id", async (req, res, next) => {
 
 ////////////////////// Quiz Grades //////////////////////////////////
 
+router.post("/submitQuiz", async (req, res, next) => {
+    try {
+        const data = req.body;
+        const quizGrade = await UserServices.submitQuiz({
+                userId: data.userId,
+                quizId: data.quizId,
+                answers: data.answers
+            });
+        res.status(201).json({
+            message: "Quiz submitted successfully",
+            data: quizGrade
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.get("/QuizGrade/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const quizGrade = await UserServices.getQuizGradeById(id);
+        res.status(200).json(quizGrade);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+
+router.get("/QuizGradesByUser/:userId", async (req, res, next) => {
+    try {
+        const userId = req.params.userId;
+        const quizGrades = await UserServices.getQuizGradesByUserId(userId);
+        res.status(200).json(quizGrades);
+    }
+    catch (error) {
+        next(error);
+    }
+});
 
 /////////////////////User///////////////////////////////////
 
