@@ -4,7 +4,11 @@ const { Op } = require("sequelize");
 
 async function createQuestion(data) {
     try {
-        const existingQuestion = await Question.findOne({ where: { question: data.question } });
+        const existingQuestion = await Question.findOne({ 
+            where: { 
+            question: data.question,
+            quizId: data.quizId
+         } });
         if (existingQuestion) {
             throw new Error("Question already exists");
         }

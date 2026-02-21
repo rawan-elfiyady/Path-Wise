@@ -75,6 +75,105 @@ router.get("/searchRoadmaps", async (req, res, next) => {
     }
 });
 
+////////////////////////////////SavedRoadmaps//////////////////////////
+
+
+// SAVE ROADMAP
+router.post("/SaveRoadmap", async (req, res, next) => {
+    try {
+
+        const { userId, roadmapId, progressStatus, progressPercentage } = req.body;
+
+        const SavedRoadmap = await UserServices.createSavedRoadmap({
+            userId,
+            roadmapId,
+            progressStatus,
+            progressPercentage
+        });
+
+        res.status(201).json({
+            message: "Roadmap saved successfully",
+            data: SavedRoadmap
+        });
+
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+// GET USER SAVED ROADMAPS
+router.get("/SavedRoadmaps/:id", async (req, res, next) => {
+    try {
+
+        const id = req.params.id;
+
+        const SavedRoadmaps = await UserServices.getUserSavedRoadmaps(id);
+
+        res.status(200).json(SavedRoadmaps);
+
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+// GET SAVED ROADMAP BY ID
+router.get("/SavedRoadmap/:id", async (req, res, next) => {
+    try {
+
+        const id = req.params.id;
+
+        const SavedRoadmap = await UserServices.getSavedRoadmapById(id);
+
+        res.status(200).json(SavedRoadmap);
+
+    } catch (err) {
+        next(err);
+    }
+});
+
+
+// UPDATE SAVED ROADMAP
+router.put("/SavedRoadmap/:roadmapId/:userId", async (req, res) => {
+    try {
+        const { roadmapId, userId } = req.params;
+        const updates = req.body;
+
+        const updated = await UserServices.updateSavedRoadmap(
+            parseInt(roadmapId),
+            parseInt(userId),
+            updates
+        );
+
+        res.status(200).json({
+            message: "SavedRoadmap updated successfully",
+            data: updated
+        });
+    } catch (err) {
+        console.error("Error in PUT /SavedRoadmap/:roadmapId/:userId:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+router.delete("/SavedRoadmap/:roadmapId/:userId", async (req, res) => {
+
+    const { roadmapId, userId } = req.params;
+
+    const deleted = await UserServices.deleteSavedRoadmap(
+        parseInt(roadmapId),
+        parseInt(userId)
+    );
+
+    res.status(200).json({
+        message: "SavedRoadmap deleted successfully",
+        deleted
+    });
+});
+
+
+
 ////////////////////////////////SavedSkills////////////////////////////
 
 
@@ -94,9 +193,10 @@ router.post("/SaveSkill", async (req, res, next) => {
 });
 
 
-router.get("/SavedSkills", async (req, res, next) => {
+router.get("/SavedSkills/:id", async (req, res, next) => {
     try {
-        const SavedSkills = await UserServices.getAllSavedSkills();
+        const id = req.params.id;
+        const SavedSkills = await UserServices.getUserSavedSkills(id);
         res.status(200).json(SavedSkills);
     }
     catch (err) {
@@ -208,16 +308,16 @@ router.get("/TrackByName", async (req, res, next) => {
 ///////////////////////////////Topics//////////////////////////////////
 
 
-router.get("/Topics", async (req, res, next) => {
+/* router.get("/Topics/", async (req, res, next) => {
     try {
-        const tpoics = await UserServices.getAllTracks();
+        const topics = await UserServices.getAllTracks();
         res.status(200).json(topics);
     }
     catch (err) {
         next(err);
     }
 });
-
+ */
 router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
     try {
         const { roadmapId } = req.params;
@@ -404,6 +504,29 @@ router.get("/RegionByName", async (req, res, next) => {
     }
     catch (err) {
         next(err);
+    }
+});
+
+/////////////////////////////Statistics////////////////////////////////
+
+router.get("/marketDemand/track/:id",  async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const statistics = await UserServices.getTrackStatistics(id);
+        res.status(200).json(statistics);
+    } catch (error) {
+        next(error);
+    }
+}
+);
+
+router.get("/marketDemand/region/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const statistics = await UserServices.getRegionStatistics(id);
+        res.status(200).json(statistics);
+    } catch (error) {
+        next(error);
     }
 });
 

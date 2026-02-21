@@ -9,7 +9,11 @@ const QuizRepo = require("../Repositories/QuizzesRepository");
 const QuestionsRepo = require("../Repositories/QuestionsRepository");
 const UserRepo = require("../Repositories/UserRepository");
 const ContributionRepo = require("../Repositories/UserContributionRepository");
+const SavedRoadmapRepository = require("../Repositories/SavedRoadmapRepository");
+const MarketDemandRepo = require("../Repositories/MarketDemandRepository");
 const { underscoredIf } = require("sequelize/lib/utils");
+const db = require("../models");
+const { SavedRoadmap } = db;
 
 
 
@@ -45,6 +49,74 @@ async function searchRoadmaps(search) {
     return roadmaps;
 }
 
+////////////////////////////////SavedRoadmaps////////////////////////////////
+
+
+// CREATE
+async function createSavedRoadmap(data) {
+
+    const existing = await SavedRoadmapRepository.getUserSavedRoadmaps(data.userId);
+
+    const alreadyExists = existing.find(
+        r => r.roadmapId === data.roadmapId
+    );
+
+    if (alreadyExists) {
+        throw new Error("Roadmap already saved by this user");
+    }
+
+    return await SavedRoadmapRepository.createSavedRoadmap(data);
+}
+
+
+// GET USER ROADMAPS
+async function getUserSavedRoadmaps(userId) {
+
+    const roadmaps = await SavedRoadmapRepository.getUserSavedRoadmaps(userId);
+
+    if (!roadmaps || roadmaps.length === 0) {
+        throw new Error("No saved roadmaps found for this user");
+    }
+
+    return roadmaps;
+}
+
+
+// GET BY ID
+async function getSavedRoadmapById(id) {
+
+    const roadmap = await SavedRoadmapRepository.getSavedRoadmapById(id);
+
+    if (!roadmap) {
+        throw new Error("Saved roadmap not found");
+    }
+
+    return roadmap;
+}
+
+
+// UPDATE
+async function updateSavedRoadmap(roadmapId, userId, updates) {
+    const existing = await SavedRoadmap.findOne({ where: { roadmapId, userId } });
+    if (!existing) throw new Error("SavedRoadmap not found");
+
+    return await SavedRoadmapRepository.updateSavedRoadmap(roadmapId, userId, updates);
+}
+
+
+async function deleteSavedRoadmap(roadmapId, userId) {
+
+    const existing = await SavedRoadmapRepository.getSavedRoadmapById(roadmapId, userId);
+
+    if (!existing) {
+        throw new Error("Saved roadmap not found");
+    }
+
+    return await SavedRoadmapRepository.deleteSavedRoadmap(roadmapId, userId);
+}
+
+
+
 ////////////////////////////////SavedSkills//////////////////////////////////
 
 async function createSevedSkill(name, userId) {
@@ -56,8 +128,8 @@ async function createSevedSkill(name, userId) {
     }
 }
 
-async function getAllSavedSkills() {
-    return await SavedSkillRepo.getAllSavedSkills();
+async function getUserSavedSkills(id) {
+    return await SavedSkillRepo.getUserSavedSkills(id);
 }
 
 async function getSavedSkillById(id) {
@@ -181,6 +253,17 @@ async function getRegionByName(name) {
     return await RegionsRepository.getRegionByName(name);
 }
 
+///////////////////////////////Statistics///////////////////////////////
+
+async function getTrackStatistics(id){
+    return await MarketDemandRepo.getTrackStatistics(id);
+}
+
+async function getRegionStatistics(id){
+    return await MarketDemandRepo.getRegionStatistics(id);
+}
+
+
 ///////////////////////////////Quizess//////////////////////////////////
 
 
@@ -279,8 +362,13 @@ module.exports = {
     getRoadmapByName,
     getTrackRoadmaps,
     searchRoadmaps,
+    createSavedRoadmap,
+    getUserSavedRoadmaps,
+    getSavedRoadmapById,
+    updateSavedRoadmap,
+    deleteSavedRoadmap,
     createSevedSkill,
-    getAllSavedSkills,
+    getUserSavedSkills,
     getSavedSkillById,
     getSavedSkillByName,
     updateSavedSkill,
@@ -304,6 +392,8 @@ module.exports = {
     getRegionById,
     getRegionByTrackId,
     getRegionByName,
+    getTrackStatistics,
+    getRegionStatistics,
     getAllQuizzes,
     getQuizById,
     getQuizzesByEntity,

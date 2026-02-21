@@ -19,8 +19,10 @@ async function createSevedSkill(data) {
 }
 
 
-async function getAllSavedSkills() {
-    return await SavedSkill.findAll();
+async function getUserSavedSkills(id) {
+    return await SavedSkill.findAll({
+        where: {userId: id}
+    });
 }
 
 
@@ -36,7 +38,7 @@ async function getSavedSkillByName(name) {
 
 async function updateSavedSkill(id, updates) {
     try {
-        await SavedSkill.update({ updates }, { where: { id } });
+        await SavedSkill.update( updates , { where: { id } });
         return await SavedSkill.findByPk(id);
     } catch (error) {
         console.error("Error updating SavedSkill:", error);
@@ -57,7 +59,7 @@ async function deleteSavedSkill(id) {
 
 module.exports = {
     createSevedSkill,
-    getAllSavedSkills,
+    getUserSavedSkills,
     getSavedSkilById,
     getSavedSkillByName,
     updateSavedSkill,
