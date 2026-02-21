@@ -13,6 +13,7 @@ const ContributionRepo = require("../Repositories/UserContributionRepository");
 const SavedRoadmapRepository = require("../Repositories/SavedRoadmapRepository");
 const MarketDemandRepo = require("../Repositories/MarketDemandRepository");
 const { underscoredIf } = require("sequelize/lib/utils");
+const axios = require("axios");
 const db = require("../models");
 const { SavedRoadmap } = db;
 
@@ -381,6 +382,24 @@ async function deleteUserContribution(id, userId) {
     return await ContributionRepo.deleteContribution(id);
 }
 
+////////////////////////////////////////  CV  ///////////////////////////////////////
+
+
+async function generateCV(data) {
+    try {
+        const response = await axios.post(
+            "http://localhost:8000/generate_cv/",  // ← البورت الصح
+            data,
+            { responseType: "arraybuffer" }       // عشان PDF
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error("AI Service Error:", error.message);
+        throw error;
+    }
+}
+
 
 
 module.exports = {
@@ -438,6 +457,7 @@ module.exports = {
     getContributionById,
     getUserContributions,
     updateUserContribution,
-    deleteUserContribution
+    deleteUserContribution,
+    generateCV
 
 };

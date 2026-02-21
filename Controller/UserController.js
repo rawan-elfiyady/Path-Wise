@@ -786,5 +786,23 @@ router.delete("/contribution/:id", async (req, res, next) => {
     }
 });
 
+//////////////////////////////  CV  ////////////////////////////////
+
+router.post("/generate-cv", async (req, res, next) => {
+    try {
+        const pdf = await UserServices.generateCV(req.body);
+
+        res.set({
+            "Content-Type": "application/pdf",
+            "Content-Disposition": "attachment; filename=cv.pdf",
+        });
+
+        res.send(pdf);
+
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 module.exports = router; 
