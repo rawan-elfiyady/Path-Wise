@@ -468,6 +468,9 @@ async function updateQuestion(id, updates) {
     return await QuestionRepo.updateQuestion(id, updates);
 }
 
+async function updateQuestionChoices(questionId, choices) {
+    return await QuestionRepo.updateQuestionChoices(questionId, choices);
+}
 async function deleteQuestion(id) {
     try{
     return await QuestionRepo.deleteQuestion(id);
@@ -605,6 +608,7 @@ module.exports = {
     getQuestionsByQuizId,
     getQuestionByText,
     updateQuestion,
+    updateQuestionChoices,
     deleteQuestion,
     getAllUsers,
     getUserById,

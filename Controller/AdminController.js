@@ -899,8 +899,8 @@ router.delete("/Quiz/:id", verifyToken, authorize("admin"), async (req, res, nex
 // CREATE
 router.post("/createQuestion", verifyToken, authorize("admin"), async (req, res, next) => {
     try {
-        const { question, answer, degree, quizId } = req.body;
-        const Question = await AdminServices.createQuestion({question, answer, degree, quizId});
+        const { question, answer, degree, quizId, choices } = req.body;
+        const Question = await AdminServices.createQuestion({question, answer, degree, quizId, choices});
 
         res.status(201).json({
             message: "Question created successfully",
@@ -973,6 +973,18 @@ router.put("/Question/:id", verifyToken, authorize("admin"), async (req, res, ne
     }
 });
 
+router.put("/Question/:id/choices", verifyToken, authorize("admin"), async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const { choices } = req.body;
+        await AdminServices.updateQuestionChoices(id, choices);
+        res.status(200).json({
+            message: "Question choices updated successfully"
+        });
+    } catch (error) {
+        next(error);
+    }
+});
 // DELETE
 router.delete("/Question/:id", verifyToken, authorize("admin"), async (req, res, next) => {
     try {

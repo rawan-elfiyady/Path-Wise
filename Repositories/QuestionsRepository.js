@@ -1,18 +1,30 @@
 const db = require("../models");
-const { Sequelize, Question } = db;
+const { Sequelize, Question, Choice } = db;
 const { Op } = require("sequelize");
 
 async function createQuestion(data) {
     try {
+        const quiz = await db.Quiz.findByPk(data.quizId);
+        if (!quiz) {
+            throw new Error("Quiz not found");
+        }
         const existingQuestion = await Question.findOne({ 
             where: { 
             question: data.question,
-            quizId: data.quizId
+            quizId: data.quizId,
          } });
         if (existingQuestion) {
             throw new Error("Question already exists");
         }
-        return await Question.create(data);
+        const question = await Question.create(data);
+        if (data.choices && Array.isArray(data.choices)) {
+            const choicesData = data.choices.map(choice => ({
+                ...choice,
+                questionId: question.id,
+            }));
+            await Choice.bulkCreate(choicesData);
+        }
+        return question;
     } catch (error) {
         console.error("Error creating question:", error);
         throw error;
@@ -21,7 +33,9 @@ async function createQuestion(data) {
 
 async function getAllQuestions() {
     try {
-        const questions = await Question.findAll();
+        const questions = await Question.findAll(
+            { include: [{ model: Choice, as: "choices" }] }
+        );
         if (questions.length === 0) {
             throw new Error("No questions found");
         }
@@ -33,7 +47,7 @@ async function getAllQuestions() {
 
 async function getQuestionById(id) {
     try {
-        const question = await Question.findByPk(id);
+        const question = await Question.findByPk(id, { include: [{ model: Choice, as: "choices" }] });
         if (!question) {
             throw new Error("Question not found");
         }
@@ -45,7 +59,10 @@ async function getQuestionById(id) {
 
 async function getQuestionsByQuizId(quizId) {
     try {
-    const questions = await Question.findAll({ where: { quizId } });
+    const questions = await Question.findAll({ 
+        where: { quizId },
+        include: [{ model: Choice, as: "choices" }] 
+    });
     if (questions.length === 0) {
         throw new Error("No questions found for this quiz");
     }
@@ -69,14 +86,40 @@ async function getQuestionByText(question) {
 
 async function updateQuestion(id, updates) {
     try {
-    const question = await Question.findByPk(id);
+        if (updates.quizId) {
+            const quiz = await db.Quiz.findByPk(updates.quizId);
+            if (!quiz) {
+                throw new Error("Quiz not found");
+            } 
+        }
+    const question = await Question.findByPk(id, { include: [{ model: Choice, as: "choices" }] });
+
     if (!question) {
         throw new Error("Question not found"); 
     } 
-        return await Question.update(updates, { where: { id } });
+
+            return await Question.update(updates, { where: { id } });
     } catch (error) {
          throw new Error("Error updating question: " + error.message); 
         }
+}
+
+async function updateQuestionChoices(questionId, choices) {
+    try {
+        const question = await Question.findByPk(questionId);
+        if (!question) {
+            throw new Error("Question not found");
+        }
+        await Choice.destroy({ where: { questionId } });
+        const choicesData = choices.map(choice => ({
+            ...choice,
+            questionId,
+        }));
+        await Choice.bulkCreate(choicesData);
+        return await Question.findByPk(questionId, { include: [{ model: Choice, as: "choices" }] });
+    } catch (error) {
+        throw new Error("Error updating question choices: " + error.message);
+    }
 }
 
 async function deleteQuestion(id) {
@@ -98,5 +141,6 @@ module.exports = {
     getQuestionsByQuizId,
     getQuestionByText,
     updateQuestion,
+    updateQuestionChoices,
     deleteQuestion
 };

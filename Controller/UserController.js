@@ -192,7 +192,7 @@ router.post("/SaveSkill", async (req, res, next) => {
     }
 });
 
-
+// GET USER SAVED SKILLS
 router.get("/SavedSkills/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
@@ -204,7 +204,7 @@ router.get("/SavedSkills/:id", async (req, res, next) => {
     }
 });
 
-
+// GET SAVED SKILL BY ID
 router.get("/SavedSkill/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
@@ -409,21 +409,6 @@ router.get("/TechnologyByName", async (req, res, next) => {
 
 //////////////////////////////////Sources/////////////////////////////////////
 
-router.post("/createSource", async (req, res, next) => {
-    try {
-        const { name, category, link, topicId } = req.body;
-        const source = await UserServices.createSource({ name, category, link, topicId });
-
-        res.status(201).json({
-            message: "Source suggested successfully",
-            data: source
-        });
-    } catch (error) {
-        next(error);
-    }
-});
-
-
 router.get("/Sources", async (req, res, next) => {
     try {
         const sources = await UserServices.getAllSources();
@@ -602,38 +587,40 @@ router.get("/Question/:id", async (req, res, next) => {
     }
 });
 
+////////////////////// Quiz Grades //////////////////////////////////
+
 
 /////////////////////User///////////////////////////////////
 
 
-// REGISTER
-router.post("/register", async (req, res, next) => {
-    try {
-        const { name, email, password, image, cv, role } = req.body;
-        const user = await UserServices.registerUser({ name, email, password, image, cv, role });
+// // REGISTER
+// router.post("/register", async (req, res, next) => {
+//     try {
+//         const { name, email, password, image, cv, role } = req.body;
+//         const user = await UserServices.registerUser({ name, email, password, image, cv, role });
 
-        res.status(201).json({
-            message: "User registered successfully",
-            data: user
-        });
-    } catch (error) {
-        next(error);
-    }
-});
+//         res.status(201).json({
+//             message: "User registered successfully",
+//             data: user
+//         });
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 
-// LOGIN
-router.post("/login", async (req, res, next) => {
-    try {
-        const { email } = req.body;
+// // LOGIN
+// router.post("/login", async (req, res, next) => {
+//     try {
+//         const { email } = req.body;
 
-        const user = await UserServices.loginUser(email);
+//         const user = await UserServices.loginUser(email);
 
-        res.status(200).json(user);
-    } catch (error) {
-        next(error);
-    }
-});
+//         res.status(200).json(user);
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 
 // GET PROFILE BY ID
