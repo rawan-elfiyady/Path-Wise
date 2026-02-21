@@ -1,6 +1,6 @@
 const db = require("../models");
-const { Sequelize, SavedRoadmap, TopicProgress } = db;
-const { Op } = require("sequelize");
+const { SavedRoadmap, TopicProgress, sequelize } = db;
+
 
 
 // CREATE
@@ -51,11 +51,16 @@ async function getSavedRoadmapById(id) {
 }
 
 
-// UPDATE
-async function updateSavedRoadmap(id, updates) {
+// UPDATE with composite key
+async function updateSavedRoadmap(roadmapId, userId, updates) {
     try {
-        await SavedRoadmap.update(updates, { where: { id } });
-        return await SavedRoadmap.findByPk(id);
+        await SavedRoadmap.update(updates, {
+            where: { roadmapId, userId }
+        });
+
+        return await SavedRoadmap.findOne({
+            where: { roadmapId, userId }
+        });
     } catch (error) {
         console.error("Error updating SavedRoadmap:", error);
         throw error;
@@ -63,15 +68,25 @@ async function updateSavedRoadmap(id, updates) {
 }
 
 
-// DELETE
-async function deleteSavedRoadmap(id) {
-    try {
-        return await SavedRoadmap.destroy({ where: { id } });
-    } catch (error) {
-        console.error("Error deleting SavedRoadmap:", error);
-        throw error;
-    }
+async function deleteSavedRoadmap(roadmapId, userId) {
+
+    // delete children first
+    await TopicProgress.destroy({
+        where: { 
+            savedRoadmapId: roadmapId 
+        }
+    });
+
+    // delete parent باستخدام composite key
+    return await SavedRoadmap.destroy({
+        where: {
+            roadmapId: roadmapId,
+            userId: userId
+        }
+    });
 }
+
+
 
 
 module.exports = {

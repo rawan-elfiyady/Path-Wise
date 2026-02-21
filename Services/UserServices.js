@@ -10,7 +10,10 @@ const QuestionsRepo = require("../Repositories/QuestionsRepository");
 const UserRepo = require("../Repositories/UserRepository");
 const ContributionRepo = require("../Repositories/UserContributionRepository");
 const SavedRoadmapRepository = require("../Repositories/SavedRoadmapRepository");
+const MarketDemandRepo = require("../Repositories/MarketDemandRepository");
 const { underscoredIf } = require("sequelize/lib/utils");
+const db = require("../models");
+const { SavedRoadmap } = db;
 
 
 
@@ -93,29 +96,25 @@ async function getSavedRoadmapById(id) {
 
 
 // UPDATE
-async function updateSavedRoadmap(id, updates) {
+async function updateSavedRoadmap(roadmapId, userId, updates) {
+    const existing = await SavedRoadmap.findOne({ where: { roadmapId, userId } });
+    if (!existing) throw new Error("SavedRoadmap not found");
 
-    const existing = await SavedRoadmapRepository.getSavedRoadmapById(id);
+    return await SavedRoadmapRepository.updateSavedRoadmap(roadmapId, userId, updates);
+}
+
+
+async function deleteSavedRoadmap(roadmapId, userId) {
+
+    const existing = await SavedRoadmapRepository.getSavedRoadmapById(roadmapId, userId);
 
     if (!existing) {
         throw new Error("Saved roadmap not found");
     }
 
-    return await SavedRoadmapRepository.updateSavedRoadmap(id, updates);
+    return await SavedRoadmapRepository.deleteSavedRoadmap(roadmapId, userId);
 }
 
-
-// DELETE
-async function deleteSavedRoadmap(id) {
-
-    const existing = await SavedRoadmapRepository.getSavedRoadmapById(id);
-
-    if (!existing) {
-        throw new Error("Saved roadmap not found");
-    }
-
-    return await SavedRoadmapRepository.deleteSavedRoadmap(id);
-}
 
 
 ////////////////////////////////SavedSkills//////////////////////////////////
@@ -254,6 +253,17 @@ async function getRegionByName(name) {
     return await RegionsRepository.getRegionByName(name);
 }
 
+///////////////////////////////Statistics///////////////////////////////
+
+async function getTrackStatistics(id){
+    return await MarketDemandRepo.getTrackStatistics(id);
+}
+
+async function getRegionStatistics(id){
+    return await MarketDemandRepo.getRegionStatistics(id);
+}
+
+
 ///////////////////////////////Quizess//////////////////////////////////
 
 
@@ -382,6 +392,8 @@ module.exports = {
     getRegionById,
     getRegionByTrackId,
     getRegionByName,
+    getTrackStatistics,
+    getRegionStatistics,
     getAllQuizzes,
     getQuizById,
     getQuizzesByEntity,
