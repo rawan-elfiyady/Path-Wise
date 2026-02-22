@@ -4,10 +4,11 @@ const UserServices = require("../Services/UserServices");
 const AIServices = require("../Services/AIServices");
 const UserRepo = require("../Repositories/UserRepository");
 const verifyToken = require("../Middlewares/verifyToken"); 
+const authorize = require("../Middlewares/auth");
 
 /////////////////////// AI RECOMMENDATION //////////////////////
 
-router.post("/aiConsultation", async (req, res, next) => {
+router.post("/aiConsultation", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const data = req.body;
         const recommendation = await AIServices.getAIRecommendation(data);
@@ -20,7 +21,7 @@ router.post("/aiConsultation", async (req, res, next) => {
 //////////////////////////////////ROADMAPS///////////////////////////////
 
 // GET ALL ROADMAPS
-router.get("/roadmaps", async (req, res, next) => {
+router.get("/roadmaps", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const roadmaps = await UserServices.getAllRoadmaps();
         res.status(200).json(roadmaps);
@@ -31,7 +32,7 @@ router.get("/roadmaps", async (req, res, next) => {
 });
 
 // GET BY ID
-router.get("/roadmap/:id", async (req, res, next) => {
+router.get("/roadmap/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const roadmap = await UserServices.getRoadmapById(id);
@@ -44,7 +45,7 @@ router.get("/roadmap/:id", async (req, res, next) => {
 });
 
 // GET BY NAME (use query param)
-router.get("/roadmapByName", async (req, res, next) => {
+router.get("/roadmapByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const roadmap = await UserServices.getRoadmapByName(name);
@@ -57,7 +58,7 @@ router.get("/roadmapByName", async (req, res, next) => {
 });
 
 // GET ROADMAPS FOR A TRACK
-router.get("/trackRoadmaps/:id", async (req, res, next) => {
+router.get("/trackRoadmaps/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const roadmaps = await UserServices.getTrackRoadmaps(id);
@@ -70,7 +71,7 @@ router.get("/trackRoadmaps/:id", async (req, res, next) => {
 });
 
 // SEARCH ROADMAPS
-router.get("/searchRoadmaps", async (req, res, next) => {
+router.get("/searchRoadmaps", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const { search } = req.query;
         const roadmaps = await UserServices.searchRoadmaps(search);
@@ -90,7 +91,7 @@ router.get("/searchRoadmaps", async (req, res, next) => {
 
 
 // SAVE ROADMAP
-router.post("/SaveRoadmap", async (req, res, next) => {
+router.post("/SaveRoadmap", verifyToken, authorize("user"), async (req, res, next) => {
     try {
 
         const { userId, roadmapId, progressStatus, progressPercentage } = req.body;
@@ -114,7 +115,7 @@ router.post("/SaveRoadmap", async (req, res, next) => {
 
 
 // GET USER SAVED ROADMAPS
-router.get("/SavedRoadmaps/:id", async (req, res, next) => {
+router.get("/SavedRoadmaps/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
 
         const id = req.params.id;
@@ -130,7 +131,7 @@ router.get("/SavedRoadmaps/:id", async (req, res, next) => {
 
 
 // GET SAVED ROADMAP BY ID
-router.get("/SavedRoadmap/:id", async (req, res, next) => {
+router.get("/SavedRoadmap/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
 
         const id = req.params.id;
@@ -146,7 +147,7 @@ router.get("/SavedRoadmap/:id", async (req, res, next) => {
 
 
 // UPDATE SAVED ROADMAP
-router.put("/SavedRoadmap/:roadmapId/:userId", async (req, res) => {
+router.put("/SavedRoadmap/:roadmapId/:userId", verifyToken, authorize("user"), async (req, res) => {
     try {
         const { roadmapId, userId } = req.params;
         const updates = req.body;
@@ -168,7 +169,7 @@ router.put("/SavedRoadmap/:roadmapId/:userId", async (req, res) => {
 });
 
 
-router.delete("/SavedRoadmap/:roadmapId/:userId", async (req, res) => {
+router.delete("/SavedRoadmap/:roadmapId/:userId", verifyToken, authorize("user"), async (req, res) => {
 
     const { roadmapId, userId } = req.params;
 
@@ -188,7 +189,7 @@ router.delete("/SavedRoadmap/:roadmapId/:userId", async (req, res) => {
 ////////////////////////////////SavedSkills////////////////////////////
 
 
-router.post("/SaveSkill", async (req, res, next) => {
+router.post("/SaveSkill", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const { name, userId } = req.body;
         const SaveSkill = await UserServices.createSevedSkill({ name, userId });
@@ -204,7 +205,7 @@ router.post("/SaveSkill", async (req, res, next) => {
 });
 
 // GET USER SAVED SKILLS
-router.get("/SavedSkills/:id", async (req, res, next) => {
+router.get("/SavedSkills/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const SavedSkills = await UserServices.getUserSavedSkills(id);
@@ -216,7 +217,7 @@ router.get("/SavedSkills/:id", async (req, res, next) => {
 });
 
 // GET SAVED SKILL BY ID
-router.get("/SavedSkill/:id", async (req, res, next) => {
+router.get("/SavedSkill/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const SavedSkill = await UserServices.getSavedSkillById(id);
@@ -229,7 +230,7 @@ router.get("/SavedSkill/:id", async (req, res, next) => {
 });
 
 
-router.get("/SavedSkillByName", async (req, res, next) => {
+router.get("/SavedSkillByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const SavedSkill = await UserServices.getSavedSkillByName(name);
@@ -242,7 +243,7 @@ router.get("/SavedSkillByName", async (req, res, next) => {
 });
 
 
-router.put("/SavedSkill/:id", async (req, res, next) => {
+router.put("/SavedSkill/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -260,7 +261,7 @@ router.put("/SavedSkill/:id", async (req, res, next) => {
 });
 
 
-router.delete("/SavedSkill/:id", async (req, res, next) => {
+router.delete("/SavedSkill/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await UserServices.deleteSavedSkill(id);
@@ -279,7 +280,7 @@ router.delete("/SavedSkill/:id", async (req, res, next) => {
 ///////////////////////////////Tracks/////////////////////////////////
 
 
-router.get("/Tracks", async (req, res, next) => {
+router.get("/Tracks", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const tracks = await UserServices.getAllTracks();
         res.status(200).json(tracks);
@@ -290,7 +291,7 @@ router.get("/Tracks", async (req, res, next) => {
 });
 
 
-router.get("/Track/:id", async (req, res, next) => {
+router.get("/Track/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const track = await UserServices.getTrackById(id);
@@ -303,7 +304,7 @@ router.get("/Track/:id", async (req, res, next) => {
 });
 
 
-router.get("/TrackByName", async (req, res, next) => {
+router.get("/TrackByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const track = await UserServices.getTrackByName(name);
@@ -329,7 +330,7 @@ router.get("/TrackByName", async (req, res, next) => {
     }
 });
  */
-router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
+router.get("/TopicsByRoadmap/:roadmapId", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const { roadmapId } = req.params;
         const topics = await UserServices.getTopicsByRoadmapId(roadmapId);
@@ -342,7 +343,7 @@ router.get("/TopicsByRoadmap/:roadmapId", async (req, res, next) => {
 });
 
 
-router.get("/Topic/:id", async (req, res, next) => {
+router.get("/Topic/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const topic = await UserServices.getTopicById(id);
@@ -355,7 +356,7 @@ router.get("/Topic/:id", async (req, res, next) => {
 });
 
 
-router.get("/TopicByName", async (req, res, next) => {
+router.get("/TopicByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const topic = await UserServices.getTopicByName(name);
@@ -370,7 +371,7 @@ router.get("/TopicByName", async (req, res, next) => {
 ///////////////////////////////Tecknology//////////////////////////
 
 
-router.get("/Technologies", async (req, res, next) => {
+router.get("/Technologies", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const technologies = await UserServices.getAllTechnologies();
         res.status(200).json(technologies);
@@ -381,7 +382,7 @@ router.get("/Technologies", async (req, res, next) => {
 });
 
 
-router.get("/Technology/:id", async (req, res, next) => {
+router.get("/Technology/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const technology = await UserServices.getTechnologyById(id);
@@ -393,7 +394,7 @@ router.get("/Technology/:id", async (req, res, next) => {
     }
 });
 
-router.get("/TechnologyTrack/:id", async (req, res, next) => {
+router.get("/TechnologyTrack/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const technology = await UserServices.getTechnologyByTrackId(id);
@@ -406,7 +407,7 @@ router.get("/TechnologyTrack/:id", async (req, res, next) => {
 });
 
 
-router.get("/TechnologyByName", async (req, res, next) => {
+router.get("/TechnologyByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const technology = await UserServices.getTechnologyByName(name);
@@ -420,7 +421,7 @@ router.get("/TechnologyByName", async (req, res, next) => {
 
 //////////////////////////////////Sources/////////////////////////////////////
 
-router.get("/Sources", async (req, res, next) => {
+router.get("/Sources", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const sources = await UserServices.getAllSources();
         res.status(200).json(sources);
@@ -430,7 +431,7 @@ router.get("/Sources", async (req, res, next) => {
 });
 
 
-router.get("/Source/:id", async (req, res, next) => {
+router.get("/Source/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const source = await UserServices.getSourceById(id);
@@ -441,7 +442,7 @@ router.get("/Source/:id", async (req, res, next) => {
 });
 
 
-router.get("/SourceTopic/:topicId", async (req, res, next) => {
+router.get("/SourceTopic/:topicId", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const topicId = req.params.topicId;
         const sources = await UserServices.getSourcesByTopicId(topicId);
@@ -454,7 +455,7 @@ router.get("/SourceTopic/:topicId", async (req, res, next) => {
 /////////////////////////////REgions/////////////////////////
 
 
-router.get("/Regions", async (req, res, next) => {
+router.get("/Regions", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const regions = await UserServices.getAllRegions();
         res.status(200).json(regions);
@@ -465,7 +466,7 @@ router.get("/Regions", async (req, res, next) => {
 });
 
 
-router.get("/Region/:id", async (req, res, next) => {
+router.get("/Region/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const region = await UserServices.getRegionById(id);
@@ -478,7 +479,7 @@ router.get("/Region/:id", async (req, res, next) => {
 });
 
 
-router.get("/RegionTrack/:id", async (req, res, next) => {
+router.get("/RegionTrack/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const regions = await UserServices.getRegionsByTrackId(id);
@@ -491,7 +492,7 @@ router.get("/RegionTrack/:id", async (req, res, next) => {
 });
 
 
-router.get("/RegionByName", async (req, res, next) => {
+router.get("/RegionByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const region = await UserServices.getRegionByName(name);
@@ -505,7 +506,7 @@ router.get("/RegionByName", async (req, res, next) => {
 
 /////////////////////////////Statistics////////////////////////////////
 
-router.get("/marketDemand/track/:id",  async (req, res, next) => {
+router.get("/marketDemand/track/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const statistics = await UserServices.getTrackStatistics(id);
@@ -516,7 +517,7 @@ router.get("/marketDemand/track/:id",  async (req, res, next) => {
 }
 );
 
-router.get("/marketDemand/region/:id", async (req, res, next) => {
+router.get("/marketDemand/region/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const statistics = await UserServices.getRegionStatistics(id);
@@ -528,7 +529,7 @@ router.get("/marketDemand/region/:id", async (req, res, next) => {
 
 ////////////////////////////Quizess///////////////////////////////////
 
-router.get("/Quizzes", async (req, res, next) => {
+router.get("/Quizzes", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const quizzes = await UserServices.getAllQuizzes();
         res.status(200).json(quizzes);
@@ -538,7 +539,7 @@ router.get("/Quizzes", async (req, res, next) => {
 });
 
 
-router.get("/Quiz/:id", async (req, res, next) => {
+router.get("/Quiz/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const quiz = await UserServices.getQuizById(id);
@@ -549,7 +550,7 @@ router.get("/Quiz/:id", async (req, res, next) => {
 });
 
 
-router.get("/QuizByEntity", async (req, res, next) => {
+router.get("/QuizByEntity", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const { type, id } = req.query; 
         const quizzes = await UserServices.getQuizzesByEntity(type, id);
@@ -560,7 +561,7 @@ router.get("/QuizByEntity", async (req, res, next) => {
 });
 
 
-router.get("/QuizByName", async (req, res, next) => {
+router.get("/QuizByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const quiz = await UserServices.getQuizByName(name);
@@ -573,7 +574,7 @@ router.get("/QuizByName", async (req, res, next) => {
 ///////////////////////////////////////Questions///////////////////////////////////////
 
 
-router.get("/QuestionsByQuiz/:id", async (req, res, next) => {
+router.get("/QuestionsByQuiz/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const quizId = req.params.id;
         const questions = await UserServices.getQuestionsByQuizId(quizId);
@@ -586,7 +587,7 @@ router.get("/QuestionsByQuiz/:id", async (req, res, next) => {
 });
 
 // GET single question
-router.get("/Question/:id", async (req, res, next) => {
+router.get("/Question/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const question = await UserServices.getQuestionById(id);
@@ -600,7 +601,7 @@ router.get("/Question/:id", async (req, res, next) => {
 
 ////////////////////// Quiz Grades //////////////////////////////////
 
-router.post("/submitQuiz", async (req, res, next) => {
+router.post("/submitQuiz", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const data = req.body;
         const quizGrade = await UserServices.submitQuiz({
@@ -617,7 +618,7 @@ router.post("/submitQuiz", async (req, res, next) => {
     }
 });
 
-router.put("/improveQuizGrade/:id", async (req, res, next) => {
+router.put("/improveQuizGrade/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const data = req.body;
@@ -631,7 +632,7 @@ router.put("/improveQuizGrade/:id", async (req, res, next) => {
     }
 });
 
-router.get("/QuizGrade/:id", async (req, res, next) => {
+router.get("/QuizGrade/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const quizGrade = await UserServices.getQuizGradeById(id);
@@ -642,7 +643,7 @@ router.get("/QuizGrade/:id", async (req, res, next) => {
     }
 });
 
-router.get("/QuizGradesByUser/:userId", async (req, res, next) => {
+router.get("/QuizGradesByUser/:userId", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const userId = req.params.userId;
         const quizGrades = await UserServices.getQuizGradesByUserId(userId);
@@ -687,7 +688,7 @@ router.get("/QuizGradesByUser/:userId", async (req, res, next) => {
 
 
 // GET PROFILE BY ID
-router.get("/user/:id", async (req, res, next) => {
+router.get("/user/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
 
@@ -701,7 +702,7 @@ router.get("/user/:id", async (req, res, next) => {
 
 
 // UPDATE PROFILE
-router.put("/user/:id", async (req, res, next) => {
+router.put("/user/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const updates = req.body;
@@ -722,7 +723,7 @@ router.put("/user/:id", async (req, res, next) => {
 //-----------------------------------UserContribution-------------------------------//
 
 
-router.post("/contribution", async (req, res, next) => {
+router.post("/contribution", verifyToken, authorize("user"), async (req, res, next) => {
     try {
 
         const { name, link, userId,topicId } = req.body;
@@ -738,7 +739,7 @@ router.post("/contribution", async (req, res, next) => {
     }
 });
 
-router.get("/contribution/:id", async (req, res, next) => {
+router.get("/contribution/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.user.id;
@@ -752,7 +753,7 @@ router.get("/contribution/:id", async (req, res, next) => {
 });
 
 // GET ALL MY CONTRIBUTIONS
-router.get("/contributions", async (req, res, next) => {
+router.get("/contributions", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const userId = req.user.id;
 
@@ -765,7 +766,7 @@ router.get("/contributions", async (req, res, next) => {
 });
 
 // UPDATE MY CONTRIBUTION (ONLY IF PENDING)
-router.put("/contribution/:id", async (req, res, next) => {
+router.put("/contribution/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.user.id;
@@ -784,7 +785,7 @@ router.put("/contribution/:id", async (req, res, next) => {
 });
 
 // DELETE MY CONTRIBUTION (ONLY IF PENDING)
-router.delete("/contribution/:id", async (req, res, next) => {
+router.delete("/contribution/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const id = req.params.id;
         const userId = req.user.id;
@@ -802,7 +803,7 @@ router.delete("/contribution/:id", async (req, res, next) => {
 
 //////////////////////////////  CV  ////////////////////////////////
 
-router.post("/generate-cv", async (req, res, next) => {
+router.post("/generate-cv", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const pdf = await UserServices.generateCV(req.body);
 
