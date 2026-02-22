@@ -2,7 +2,7 @@
  const { Op } = require("sequelize");
  const { QuizGrade, QuizGradeAnswer, Quiz, Question } = db;
 
- async function calcGrade(quizId, quizGradeId, answers) {
+ async function calcGrade(quizId, quizGradeId, answers, goal) {
         try {
             const quiz = await db.Quiz.findByPk(quizId, {
                 include: {
@@ -11,6 +11,18 @@
             });
             if (!quiz) {
                 throw new Error("Quiz not found");
+            }
+            const quizGrade = await QuizGrade.findByPk(quizGradeId);
+            if (!quizGrade) {
+                throw new Error("QuizGrade not found");
+            }
+
+            if (goal === "improve") {
+                await QuizGradeAnswer.destroy({
+                    where: {
+                        quizGradeId: quizGradeId,
+                    },
+                });
             }
             let totalGrade = 0;
             for (const answer of answers) {
@@ -85,7 +97,7 @@
                 quizId: data.quizId,
             });
 
-            const totalGrade = await calcGrade(data.quizId, quizGrade.id, data.answers);
+            const totalGrade = await calcGrade(data.quizId, quizGrade.id, data.answers, "attend");
             if(totalGrade < quiz.grade / 2){
                 quizGrade.status = "Failed";
             }
@@ -101,6 +113,27 @@
         catch (error) {
             throw new Error(error.message);
         }
+ }
+
+ async function improveQuizGrade(quizGradeId, data){
+    try {
+        const quizGrade = await QuizGrade.findByPk(quizGradeId);
+        if (!quizGrade) {
+            return { error: "QuizGrade not found." };
+        }
+        const totalGrade = await calcGrade(quizGrade.quizId, quizGrade.id, data.answers, "improve");
+        if(totalGrade < quizGrade.Quiz.grade / 2){
+            quizGrade.status = "Failed";
+        }
+        else{
+            quizGrade.status = "Passed";
+        }
+        quizGrade.grade = totalGrade;
+        await quizGrade.save();
+        return quizGrade;
+    } catch (error) {
+        throw new Error(error.message);
+    }
  }
 
  async function getQuizGradeById(id) {
@@ -152,8 +185,11 @@
     }
     }
 
+
+
     module.exports = {
         attendQuiz,
+        improveQuizGrade,
         getQuizGradeById,
         getQuizGradesByUserId,
         };

@@ -293,6 +293,14 @@ async function submitQuiz(data) {
     }
 }
 
+async function improveQuizGrade(quizGradeId, data) {
+    try {
+        return await QuizGradeAnswerRepo.improveQuizGrade(quizGradeId, data);
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 async function getQuizGradeById(id) {
     try {
         const quizGrade = await QuizGradeAnswerRepo.getQuizGradeById(id);
@@ -445,6 +453,7 @@ module.exports = {
     getQuizzesByEntity,
     getQuizByName,
     submitQuiz,
+    improveQuizGrade,
     getQuizGradeById,
     getQuizGradesByUserId,
     getQuestionsByQuizId,

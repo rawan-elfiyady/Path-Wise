@@ -617,6 +617,20 @@ router.post("/submitQuiz", async (req, res, next) => {
     }
 });
 
+router.put("/improveQuizGrade/:id", async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const data = req.body;
+        const improvedGrade = await UserServices.improveQuizGrade(id, data);
+        res.status(200).json({
+            message: "Quiz grade improved successfully",
+            data: improvedGrade
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 router.get("/QuizGrade/:id", async (req, res, next) => {
     try {
         const id = req.params.id;
