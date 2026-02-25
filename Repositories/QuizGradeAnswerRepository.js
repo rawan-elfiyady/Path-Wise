@@ -1,6 +1,6 @@
  const db = require("../models");
  const { Op } = require("sequelize");
- const { QuizGrade, QuizGradeAnswer, Quiz, Question } = db;
+ const { QuizGrade, QuizGradeAnswer, Quiz, Question, TopicProgress } = db;
 
  async function calcGrade(quizId, quizGradeId, answers, goal) {
         try {
@@ -62,6 +62,28 @@
             if (!quiz) {
                 return { error: "Quiz not found." };
             }
+            if(quiz.entityType === "Track"){
+                const roadmap = await db.Roadmap.findByPk({where: {entityId: quiz.entityId, entityType: "Track"}, include: {model: db.Topic}});
+                if (!roadmap) {
+                    throw new Error("Roadmap not found for the quiz's track.");
+                }
+                const savedRoadmap = await db.SavedRoadmap.findOne({
+                    where: {
+                        userId: userId,
+                        roadmapId: roadmap.id,
+                    },
+                    include: {
+                        model: db.Topic,
+                    }
+                });
+                if (!savedRoadmap) {
+                    return { error: "User has not saved the roadmap for this quiz." };
+                }
+                if(savedRoadmap.progressPercentage < 80){
+                    return { error: "User has not completed at least 80% of the roadmap for this quiz." };
+                }
+            }
+            
             const existingQuiz = await QuizGrade.findOne({
                 where: {
                     quizId: quizId,
@@ -75,6 +97,39 @@
         } catch (error) {
             throw new Error(error.message);
         }
+        }
+
+    async function checkIfUserCanImproveQuizGrade(quizGradeId) {
+        try {
+            const quizGrade = await QuizGrade.findByPk(quizGradeId);
+            if (!quizGrade) {
+                return { error: "QuizGrade not found." };
+            }
+            if (quizGrade.status === "Passed") {
+                return { error: "Cannot improve a passed quiz grade." };
+            }
+            return { message: "User can improve the quiz grade." };
+        } catch (error) {
+            throw new Error(error.message);
+        }
+        }
+
+    async function changeToicProgressStatus(userId, topicId, status) {
+            try {
+                const topicProgress = await TopicProgress.findOne({
+                    where: {
+                        userId,
+                        topicId
+                    }
+                });
+                if (!topicProgress) {
+                    throw new Error("TopicProgress not found");
+                }
+                topicProgress.status = status;
+                await topicProgress.save();
+            } catch (error) {
+                throw new Error(error.message);
+            }
         }
 
  async function attendQuiz(data){
@@ -100,15 +155,51 @@
             const totalGrade = await calcGrade(data.quizId, quizGrade.id, data.answers, "attend");
             if(totalGrade < quiz.grade / 2){
                 quizGrade.status = "Failed";
-            }
-            else{
+                const finalQuizGradeWithoutAnswers = await QuizGrade.findByPk(quizGrade.id, {
+                    include: [
+                        {
+                            model: QuizGradeAnswer,
+                            attributes: { exclude: ['rightAnswer'] },
+                            as: "quizGradeAnswers",
+                            include: {
+                                model: Question,
+                                as: "question",
+                            },
+                        },
+                        {
+                            model: Quiz,
+                            as: "quiz",
+                        },
+                    ],
+                });
+                return{ message: "Quiz attended, but the user did not pass. Total grade: " + totalGrade, quizGrade: finalQuizGradeWithoutAnswers};
+             }
+              else{
                 quizGrade.status = "Passed";
+                await changeToicProgressStatus(data.userId, quiz.Topic.id, "Done");
             }
 
             quizGrade.grade = totalGrade;
             await quizGrade.save();
 
-            return quizGrade;
+            const finalQuizGrade = await QuizGrade.findByPk(quizGrade.id, {
+                include: [
+                    {
+                        model: QuizGradeAnswer,
+                        as: "quizGradeAnswers",
+                        include: {
+                            model: Question,
+                            as: "question",
+                        },
+                    },
+                    {
+                        model: Quiz,
+                        as: "quiz",
+                    },
+                ],
+            });
+
+            return finalQuizGrade;
         }
         catch (error) {
             throw new Error(error.message);

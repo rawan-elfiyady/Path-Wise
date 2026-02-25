@@ -145,6 +145,16 @@ router.get("/SavedRoadmap/:id", verifyToken, authorize("user"), async (req, res,
     }
 });
 
+router.get("/SavedRoadmapProgress/:id", verifyToken, authorize("user"), async (req, res, next) => {
+    try {
+        const id = req.params.id;   
+        const progress = await UserServices.calcRoadmapProgress(id);
+        res.status(200).json({ progressPercentage: progress });
+    } catch (err) {
+        next(err);
+    }
+});v 
+
 
 // UPDATE SAVED ROADMAP
 router.put("/SavedRoadmap/:roadmapId/:userId", verifyToken, authorize("user"), async (req, res) => {
@@ -184,6 +194,19 @@ router.delete("/SavedRoadmap/:roadmapId/:userId", verifyToken, authorize("user")
     });
 });
 
+///////////////////////////////// TopicProgress ////////////////////////////
+
+router.put("/TopicProgress/:topicId", verifyToken, authorize("user"), async (req, res, next) => {
+    try {
+        const topicId = req.params.topicId;
+        const userId = req.user.id;
+        const { status } = req.body;    
+        await UserServices.changeToicProgressStatus(userId, topicId, status);
+        res.status(200).json({ message: "Topic progress status updated successfully" });
+    } catch (err) {
+        next(err);
+    }
+});
 
 
 ////////////////////////////////SavedSkills////////////////////////////

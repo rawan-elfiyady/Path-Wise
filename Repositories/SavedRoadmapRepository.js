@@ -49,6 +49,24 @@ async function createSavedRoadmap(data) {
     }
 }
 
+async function calcRoadmapProgress(savedRoadmapId) {
+    const savedRoadmap = await SavedRoadmap.findByPk(savedRoadmapId);
+    if (!savedRoadmap) {
+        throw new Error("SavedRoadmap not found");
+    }
+    const topicProgresses = await TopicProgress.findAll({
+        where: { savedRoadmapId }
+    });
+
+    const totalTopics = topicProgresses.length;
+    const completedTopics = topicProgresses.filter(tp => tp.status === "Done").length;
+    const progressPercentage = totalTopics > 0 ? (completedTopics / totalTopics * 100) : 0;
+
+    savedRoadmap.progressPercentage = progressPercentage;
+    await savedRoadmap.save();
+
+    return progressPercentage;
+}
 
 // GET ALL FOR USER
 async function getUserSavedRoadmaps(userId) {
@@ -117,6 +135,7 @@ async function deleteSavedRoadmap(roadmapId, userId) {
 
 module.exports = {
     createSavedRoadmap,
+    calcRoadmapProgress,
     getUserSavedRoadmaps,
     getSavedRoadmapById,
     updateSavedRoadmap,

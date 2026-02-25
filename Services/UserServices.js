@@ -2,6 +2,7 @@ const RoadmapRepo = require ("../Repositories/RoadmapRepository");
 const SavedSkillRepo = require ("../Repositories/SavedSkillsRepository");
 const TrackRepo = require ("../Repositories/TracksRepository");
 const TopicRepo = require ("../Repositories/TopicRepository");
+const TopicProgressRepo = require("../Repositories/TopicProgressRepository");
 const TechnologyRepo = require ("../Repositories/TechnologiesRepository");
 const SourceRepo = require("../Repositories/SourcesRepository");
 const RegionsRepository = require("../Repositories/RegionsRepository");
@@ -70,6 +71,10 @@ async function createSavedRoadmap(data) {
     return await SavedRoadmapRepository.createSavedRoadmap(data);
 }
 
+async function calcRoadmapProgress(savedRoadmapId) {
+    return await SavedRoadmapRepository.calcRoadmapProgress(savedRoadmapId);
+}
+
 
 // GET USER ROADMAPS
 async function getUserSavedRoadmaps(userId) {
@@ -82,7 +87,6 @@ async function getUserSavedRoadmaps(userId) {
 
     return roadmaps;
 }
-
 
 // GET BY ID
 async function getSavedRoadmapById(id) {
@@ -115,6 +119,16 @@ async function deleteSavedRoadmap(roadmapId, userId) {
     }
 
     return await SavedRoadmapRepository.deleteSavedRoadmap(roadmapId, userId);
+}
+
+///////////////////////////////TopicProgress//////////////////////////////////
+
+async function changeToicProgressStatus(userId, topicId, newStatus) {
+    try {
+        return await TopicProgressRepo.changeToicProgressStatus(userId, topicId, newStatus);
+    } catch (error) {
+        throw new Error(`Error changing topic progress status: ${error.message}`);
+    }
 }
 
 
@@ -417,10 +431,12 @@ module.exports = {
     getTrackRoadmaps,
     searchRoadmaps,
     createSavedRoadmap,
+    calcRoadmapProgress,
     getUserSavedRoadmaps,
     getSavedRoadmapById,
     updateSavedRoadmap,
     deleteSavedRoadmap,
+    changeToicProgressStatus,
     createSevedSkill,
     getUserSavedSkills,
     getSavedSkillById,
