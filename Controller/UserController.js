@@ -325,7 +325,7 @@ router.get("/Track/:id", verifyToken, authorize("user"), async (req, res, next) 
 });
 
 
-router.get("/TrackByName", async (req, res, next) => {
+router.get("/TrackByName", verifyToken, authorize("user"), async (req, res, next) => {
     try {
         const name = req.query.name;
         const track = await UserServices.getTrackByName(name);
@@ -676,37 +676,6 @@ router.get("/QuizGradesByUser/:userId", verifyToken, authorize("user"), async (r
 });
 
 /////////////////////User///////////////////////////////////
-
-
-// // REGISTER
-// router.post("/register", async (req, res, next) => {
-//     try {
-//         const { name, email, password, image, cv, role } = req.body;
-//         const user = await UserServices.registerUser({ name, email, password, image, cv, role });
-
-//         res.status(201).json({
-//             message: "User registered successfully",
-//             data: user
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// });
-
-
-// // LOGIN
-// router.post("/login", async (req, res, next) => {
-//     try {
-//         const { email } = req.body;
-
-//         const user = await UserServices.loginUser(email);
-
-//         res.status(200).json(user);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
-
 
 // GET PROFILE BY ID
 router.get("/user/:id", verifyToken, authorize("user"), async (req, res, next) => {
