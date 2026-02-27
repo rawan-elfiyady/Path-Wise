@@ -16,6 +16,10 @@ async function createQuestion(data) {
         if (existingQuestion) {
             throw new Error("Question already exists");
         }
+        const answerExists = data.choices.some(choice => data.answer === choice.choice && choice.isCorrect);
+        if (!answerExists) {
+            throw new Error("At least one choice must be marked as correct");
+        }
         const question = await Question.create(data);
         if (data.choices && Array.isArray(data.choices)) {
             const choicesData = data.choices.map(choice => ({

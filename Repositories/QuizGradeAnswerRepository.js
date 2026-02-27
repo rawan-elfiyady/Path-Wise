@@ -1,12 +1,13 @@
  const db = require("../models");
  const { Op } = require("sequelize");
- const { QuizGrade, QuizGradeAnswer, Quiz, Question, TopicProgress } = db;
+ const { QuizGrade, QuizGradeAnswer, Quiz, Question, TopicProgress, Topic } = db;
 
  async function calcGrade(quizId, quizGradeId, answers, goal) {
         try {
             const quiz = await db.Quiz.findByPk(quizId, {
                 include: {
                     model: db.Question,
+                    as: "questions",
                 },
             });
             if (!quiz) {
@@ -24,9 +25,10 @@
                     },
                 });
             }
+            console.log("answers", answers) // Debugging line to check the questions in the quiz
             let totalGrade = 0;
             for (const answer of answers) {
-                const question = quiz.Questions.find(q => q.id === answer.questionId);
+                const question = quiz.questions.find(q => q.id === answer.questionId);
                 if (!question) {
                     throw new Error(`Question with ID ${answer.questionId} not found in quiz`);
                 }
@@ -56,7 +58,7 @@
         }
     }
 
-    async function checkIfUserCanAttendQuiz(quizId, userId) {
+async function checkIfUserCanAttendQuiz(quizId, userId) {
         try {
             const quiz = await Quiz.findByPk(quizId);
             if (!quiz) {
@@ -83,6 +85,17 @@
                     return { error: "User has not completed at least 80% of the roadmap for this quiz." };
                 }
             }
+            else{
+                const topicProgress = await TopicProgress.findOne({
+                    where: {
+                        userId: userId,
+                        topicId: quiz.entityId,
+                    },
+                });
+                if (!topicProgress) {
+                    return { error: "User has not started the topic for this quiz." };
+                }
+            }
             
             const existingQuiz = await QuizGrade.findOne({
                 where: {
@@ -90,7 +103,7 @@
                     userId: userId,
                 },
             });
-            if (existingQuiz) {
+            if (existingQuiz ) {
                 return { error: "This User already has a quiz grade for this quiz." };
             }
             return { message: "User can attend the quiz." };
@@ -99,7 +112,7 @@
         }
         }
 
-    async function checkIfUserCanImproveQuizGrade(quizGradeId) {
+async function checkIfUserCanImproveQuizGrade(quizGradeId) {
         try {
             const quizGrade = await QuizGrade.findByPk(quizGradeId);
             if (!quizGrade) {
@@ -114,7 +127,7 @@
         }
         }
 
-    async function changeToicProgressStatus(userId, topicId, status) {
+async function changeToicProgressStatus(userId, topicId, status) {
             try {
                 const topicProgress = await TopicProgress.findOne({
                     where: {
@@ -135,21 +148,36 @@
  async function attendQuiz(data){
         try {
             const quiz = await Quiz.findByPk(data.quizId, {
-                include: {
+                include: [{
                     model: Question,
+                    as: "questions",
+                },
+                {
+                    model:Topic,
+                    as: "topic",
+                }
+            ]
+            });
+            const topicProcess = await TopicProgress.findOne({
+                where: {
+                    userId: data.userId,
+                    topicId: quiz.topic.id,
                 },
             });
+
             if (!quiz) {
                 return { error: "Quiz not found." };
             }
-            const userCanAttendQuiz = checkIfUserCanAttendQuiz(data.quizId, data.userId);
+            const userCanAttendQuiz = await checkIfUserCanAttendQuiz(data.quizId, data.userId);
+            console.log("User can attend quiz check:", userCanAttendQuiz); // Debugging line to check the result of the user eligibility check
             if (userCanAttendQuiz.error) {
-                return userCanAttendQuiz;
+                throw new Error(userCanAttendQuiz.error);
             }
 
             const quizGrade = await QuizGrade.create({
                 userId: data.userId,
                 quizId: data.quizId,
+                topicProcessId: topicProcess ? topicProcess.id : null,
             });
 
             const totalGrade = await calcGrade(data.quizId, quizGrade.id, data.answers, "attend");
@@ -160,7 +188,7 @@
                         {
                             model: QuizGradeAnswer,
                             attributes: { exclude: ['rightAnswer'] },
-                            as: "quizGradeAnswers",
+                            as: "answers",
                             include: {
                                 model: Question,
                                 as: "question",
@@ -168,7 +196,7 @@
                         },
                         {
                             model: Quiz,
-                            as: "quiz",
+                            as: "Quiz",
                         },
                     ],
                 });
@@ -176,9 +204,10 @@
              }
               else{
                 quizGrade.status = "Passed";
-                await changeToicProgressStatus(data.userId, quiz.Topic.id, "Done");
+                await changeToicProgressStatus(data.userId, quiz.topic.id, "Done");
             }
 
+            console.log("Total Grade:", totalGrade); // Debugging line to check the calculated grade
             quizGrade.grade = totalGrade;
             await quizGrade.save();
 
@@ -186,7 +215,7 @@
                 include: [
                     {
                         model: QuizGradeAnswer,
-                        as: "quizGradeAnswers",
+                        as: "answers",
                         include: {
                             model: Question,
                             as: "question",
@@ -194,7 +223,7 @@
                     },
                     {
                         model: Quiz,
-                        as: "quiz",
+                        as: "Quiz",
                     },
                 ],
             });
@@ -208,20 +237,62 @@
 
  async function improveQuizGrade(quizGradeId, data){
     try {
-        const quizGrade = await QuizGrade.findByPk(quizGradeId);
+        const quizGrade = await QuizGrade.findByPk(quizGradeId, {
+            include: [{
+                model: Quiz,
+                as: "Quiz",
+            }]
+         }
+        );
         if (!quizGrade) {
             return { error: "QuizGrade not found." };
         }
         const totalGrade = await calcGrade(quizGrade.quizId, quizGrade.id, data.answers, "improve");
         if(totalGrade < quizGrade.Quiz.grade / 2){
             quizGrade.status = "Failed";
+            const finalQuizGradeWithoutAnswers = await QuizGrade.findByPk(quizGrade.id, {
+                    include: [
+                        {
+                            model: QuizGradeAnswer,
+                            attributes: { exclude: ['rightAnswer'] },
+                            as: "answers",
+                            include: {
+                                model: Question,
+                                as: "question",
+                            },
+                        },
+                        {
+                            model: Quiz,
+                            as: "Quiz",
+                        },
+                    ],
+        });
+        return{ message: "Quiz attended, but the user did not pass. Total grade: " + totalGrade, quizGrade: finalQuizGradeWithoutAnswers};
         }
         else{
             quizGrade.status = "Passed";
+            await changeToicProgressStatus(quizGrade.userId, quizGrade.Quiz.entityId, "Done");
         }
         quizGrade.grade = totalGrade;
         await quizGrade.save();
-        return quizGrade;
+         const finalQuizGrade = await QuizGrade.findByPk(quizGrade.id, {
+                include: [
+                    {
+                        model: QuizGradeAnswer,
+                        as: "answers",
+                        include: {
+                            model: Question,
+                            as: "question",
+                        },
+                    },
+                    {
+                        model: Quiz,
+                        as: "Quiz",
+                    },
+                ],
+            });
+
+            return finalQuizGrade;
     } catch (error) {
         throw new Error(error.message);
     }
@@ -236,7 +307,7 @@
                     as: "quizGradeAnswers",
                     include: {
                         model: Question,
-                        as: "question",
+                        as: "questions",
                     },
                 },
                 {
@@ -261,7 +332,7 @@
                     as: "quizGradeAnswers",
                     include: {
                         model: Question,
-                        as: "question",
+                        as: "questions",
                     },
                 },
                 {

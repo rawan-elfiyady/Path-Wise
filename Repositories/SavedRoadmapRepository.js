@@ -9,6 +9,7 @@ async function createSavedRoadmap(data) {
         const roadmap = await db.Roadmap.findByPk(data.roadmapId, {
             include: {
                 model: db.Topic,
+                as: "topics"
             }
         });
         if (!roadmap) {
@@ -29,13 +30,12 @@ async function createSavedRoadmap(data) {
         const savedRoadmap = await SavedRoadmap.create({
             userId: data.userId,
             roadmapId: data.roadmapId,
-            progressStatus: data.progressStatus ,
-            progressPercentage: data.progressPercentage 
         });
 
-            const topicProgressEntries = roadmap.Topics.map(topic => ({
+            const topicProgressEntries = roadmap.topics.map(topic => ({
                 savedRoadmapId: savedRoadmap.id,
                 topicId: topic.id,
+                userId: data.userId, 
                 status: "Pending"
             }));
 

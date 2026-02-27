@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         grade: {
             type: DataTypes.DECIMAL,
             allowNull: false,
+            get() {
+                const rawValue = this.getDataValue('grade');
+                return rawValue === null ? null : parseFloat(rawValue);
+            }
         },
         entityType: {
             type: DataTypes.ENUM("Track", "Topic"),

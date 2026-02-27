@@ -20,7 +20,11 @@ module.exports = (sequelize, DataTypes) => {
         TopicProgress.belongsTo(models.Topic, {
             foreignKey: "topicId",
             as: "mainTopic",
-        })
+        }),
+        TopicProgress.belongsTo(models.User, {
+            foreignKey: "userId",
+            as: "user",
+        });
     };
 
     return TopicProgress;

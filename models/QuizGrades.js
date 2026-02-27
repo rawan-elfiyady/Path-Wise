@@ -2,10 +2,16 @@ module.exports = (sequelize, DataTypes) => {
     const QuizGrade = sequelize.define("QuizGrade", {
         grade: {
             type: DataTypes.DECIMAL,
+            defaultValue: 0,
             allowNull: false,
+            get() {
+                const rawValue = this.getDataValue('grade');
+                return rawValue === null ? null : parseFloat(rawValue);
+            }
         },
         status: {
             type: DataTypes.ENUM("Passed", "Failed"),
+            defaultValue: "Failed",
             allowNull: false,
         },
     });

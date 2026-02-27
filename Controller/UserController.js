@@ -94,13 +94,11 @@ router.get("/searchRoadmaps", verifyToken, authorize("user"), async (req, res, n
 router.post("/SaveRoadmap", verifyToken, authorize("user"), async (req, res, next) => {
     try {
 
-        const { userId, roadmapId, progressStatus, progressPercentage } = req.body;
+        const { userId, roadmapId } = req.body;
 
         const SavedRoadmap = await UserServices.createSavedRoadmap({
             userId,
             roadmapId,
-            progressStatus,
-            progressPercentage
         });
 
         res.status(201).json({
@@ -153,7 +151,7 @@ router.get("/SavedRoadmapProgress/:id", verifyToken, authorize("user"), async (r
     } catch (err) {
         next(err);
     }
-});v 
+});
 
 
 // UPDATE SAVED ROADMAP
@@ -327,7 +325,7 @@ router.get("/Track/:id", verifyToken, authorize("user"), async (req, res, next) 
 });
 
 
-router.get("/TrackByName", verifyToken, authorize("user"), async (req, res, next) => {
+router.get("/TrackByName", async (req, res, next) => {
     try {
         const name = req.query.name;
         const track = await UserServices.getTrackByName(name);

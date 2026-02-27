@@ -65,6 +65,11 @@ module.exports = (sequelize, DataTypes) => {
           as: "userContributions",
           onDelete: "SET NULL",
         });
+
+        User.hasMany(models.TopicProgress, {
+            foreignKey: "userId",
+            as: "topicProgress",
+        })
         
     };
  return User;

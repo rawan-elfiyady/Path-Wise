@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
     degree: {
         type: DataTypes.DECIMAL,
         allowNull: false,
+        get() {
+            const rawValue = this.getDataValue('degree');
+            return rawValue === null ? null : parseFloat(rawValue);
+        }
     },
     });
 

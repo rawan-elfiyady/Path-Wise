@@ -7,6 +7,10 @@ module.exports = (sequelzie, DataTypes) => {
         progressPercentage: {
             type: DataTypes.DECIMAL,
             defaultValue: 0,
+            get() {
+                const rawValue = this.getDataValue('progressPercentage');
+                return rawValue === null ? null : parseFloat(rawValue);
+            }
         },
     });
 

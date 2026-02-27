@@ -36,7 +36,7 @@ async function getTrackById(id) {
 
 async function getTrackByName(name) {
     try {
-        const track = await Track.findOne({ where: { name } });
+        const track = await Track.findOne({ where: { name: { [Op.like]: `%${name}%` } } });
         if (!track) {
             throw new Error("Track not found with name: " + name);
         }
@@ -47,6 +47,46 @@ async function getTrackByName(name) {
     }
 }
 
+async function getTracksByKeyword(keyword) {
+    try {
+        const tracks = await Track.findAll({
+            where: {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${keyword}%` } },
+                    { description: { [Op.like]: `%${keyword}%` } },
+                    { keyConcepts: { [Op.like]: `%${keyword}%` } }
+                ]
+            }
+        });
+        if (!tracks || tracks.length === 0) {
+            throw new Error("No tracks found matching keyword: " + keyword);
+        }
+        return tracks;
+    } catch (error) {
+        console.error("Error fetching tracks by keyword:", error);
+        throw error;
+    }
+} 
+
+async function getTracksByName(listOfNames) {
+    try {
+        let tracks;
+        for (const name of listOfNames) {
+            const track = await Track.findOne({ where: { name } });
+            if (!track) {
+                throw new Error("Track not found with name: " + name);
+            }
+            if (!tracks) {
+                tracks = [];
+            }
+            tracks.push(track);
+        }
+        return tracks;
+    } catch (error) {
+        console.error("Error fetching tracks by name:", error);
+        throw error;
+    }
+}
 
 async function getAllTracks() {
     try{
