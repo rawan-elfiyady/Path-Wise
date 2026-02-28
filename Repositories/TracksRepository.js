@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Sequelize, Track } = db;
+const { Sequelize, Track, MarketDemand } = db;
 const { Op } = require("sequelize");
 
 async function createTrack(data) {
@@ -47,6 +47,29 @@ async function getTrackByName(name) {
     }
 }
 
+async function showTrackDetails(trackName, regionName)  {
+    try {
+        const track = await Track.findOne({ where: { name: trackName }, attributes:['id', 'name', 'description', 'icon']});
+        if (!track) {
+            throw new Error("Track not found with name: " + trackName);
+        }
+        const statistic = await MarketDemand.findOne({
+            where: {
+                trackId: track.id,
+                region: regionName
+            },
+            attributes: ['demandPercentage']
+        });
+        if (!statistic) {
+            throw new Error("Market demand statistic not found for track: " + trackName + " in region: " + regionName);
+        }
+        const demandPercentage = statistic * 100;
+        return { track, statistic  };
+    }catch (error) {
+        console.error("Error fetching track details:", error);
+        throw error;
+    }
+}
 async function getTracksByKeyword(keyword) {
     try {
         const tracks = await Track.findAll({
@@ -133,6 +156,7 @@ async function deleteTrack(id) {
 module.exports = {
     createTrack,
     getAllTracks,
+    showTrackDetails,
     getTrackById,
     getTrackByName,
     updateTrack,

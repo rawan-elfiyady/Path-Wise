@@ -184,6 +184,10 @@ async function getTrackByName(name) {
     return await TrackRepo.getTrackByName(name);
 }
 
+async function showTrackDetails(trackName, regionName) {
+    return await TrackRepo.showTrackDetails(trackName, regionName);
+}
+
 
 ///////////////////////////////Topics///////////////////////////////////////
 
@@ -257,6 +261,9 @@ async function getAllRegions() {
     return await RegionsRepository.getAllRegions();
 }
 
+async function getStatisticsForTracks(regionName, trackNames) {
+    return await RegionsRepository.getStatisticsForTracks(regionName, trackNames);
+}
 async function getRegionById(id) {
     return await RegionsRepository.getRegionById(id);
 }
@@ -444,6 +451,7 @@ module.exports = {
     updateSavedSkill,
     deleteSavedSkill,
     getAllTracks,
+    showTrackDetails,
     getTrackById,
     getTrackByName,
     getAllTopics,
@@ -459,6 +467,7 @@ module.exports = {
     getSourceById,
     getSourcesByTopicId,
     getAllRegions,
+    getStatisticsForTracks,
     getRegionById,
     getRegionByTrackId,
     getRegionByName,

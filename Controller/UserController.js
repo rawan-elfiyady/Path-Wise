@@ -17,7 +17,7 @@ router.post("/aiConsultation", verifyToken, authorize("user"), async (req, res, 
         next(error);
     }   
 });
-
+ 
 //////////////////////////////////ROADMAPS///////////////////////////////
 
 // GET ALL ROADMAPS
@@ -311,6 +311,15 @@ router.get("/Tracks", verifyToken, authorize("user"), async (req, res, next) => 
     }
 });
 
+router.get("/trackDetails", verifyToken, authorize("user"), async (req, res, next) => {
+    try {
+        const { trackName, regionName } = req.body;
+        const details = await UserServices.showTrackDetails(trackName, regionName);
+        res.status(200).json(details);
+    } catch (err) {
+        next(err);
+    }
+});
 
 router.get("/Track/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {
@@ -473,7 +482,7 @@ router.get("/SourceTopic/:topicId", verifyToken, authorize("user"), async (req, 
     }
 });
 
-/////////////////////////////REgions/////////////////////////
+/////////////////////////////Regions/////////////////////////
 
 
 router.get("/Regions", verifyToken, authorize("user"), async (req, res, next) => {
@@ -486,6 +495,16 @@ router.get("/Regions", verifyToken, authorize("user"), async (req, res, next) =>
     }
 });
 
+router.get("/tracksStatistics", verifyToken, authorize("user"), async (req, res, next) => {
+    try {
+        const data = req.body;
+        const statistics = await UserServices.getStatisticsForTracks(data.regionName, data.trackNames);
+        res.status(200).json(statistics);
+    }
+    catch (err) {
+        next(err);
+    }
+});
 
 router.get("/Region/:id", verifyToken, authorize("user"), async (req, res, next) => {
     try {

@@ -722,7 +722,7 @@ router.delete("/Region/:id", verifyToken, authorize("admin"), async (req, res, n
 
 /////////////////////////////////////Statistics//////////////////////////////////
 
-router.post("/addMarketDemand", verifyToken, authorize("admin"), async (req, res, next) => {     
+router.post("/addMarketDemand",  async (req, res, next) => {     
     try {
         const { trackId, regionId, demandPercentage } = req.body;
         const marketDemand = await AdminServices.addMarketDemand({ trackId, regionId, demandPercentage });

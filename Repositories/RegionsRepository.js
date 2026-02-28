@@ -1,5 +1,5 @@
 const db = require("../models");
-const { Sequelize, Region } = db;
+const { Sequelize, Region, MarketDemand, Track } = db;
 const { Op } = require("sequelize");
 
 async function createRegion(data) {
@@ -72,6 +72,34 @@ async function getRegionByTrackId(trackId) {
     }
 }
 
+async function getStatisticsForTracks(regionName, trackNames){
+    try {
+        let statistics = [];
+        const region = await Region.findOne({ where: { name: regionName } });
+        if (!region) {
+            throw new Error("Region not found with name: " + regionName);
+        }
+        const tracks = await region.getTracks({ where: { name: { [Op.in]: trackNames } } });
+        if (tracks.length === 0) {
+            throw new Error("No tracks found with the provided names in the specified region.");
+        }
+
+        for (const name of trackNames) {    
+            const statistic = await MarketDemand.findOne({
+                where: {
+                    region: regionName,
+                    track: name
+                },
+                // attributes: ['demandPercentage']
+            });
+            statistics.push(statistic);
+        }
+        return statistics;
+    } catch (error) {
+        console.error("Error fetching statistics for tracks:", error);
+        throw error;
+    }
+}
 
 async function getAllRegions() {
     try {
@@ -119,6 +147,7 @@ async function deleteRegion(id) {
 module.exports = {
     createRegion,
     getAllRegions,
+    getStatisticsForTracks,
     getRegionById,
     getRegionByName,
     getRegionByTrackId,
