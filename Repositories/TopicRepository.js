@@ -1,5 +1,5 @@
   const db = require("../models");
-  const { Sequelize, Topic } = db;
+  const { Sequelize, Topic, Roadmap } = db;
   const { Op } = require("sequelize");
 
   async function createTopic(data) {
@@ -27,12 +27,16 @@
 
 async function getTopicsByRoadmapId(roadmapId) {
     try{
+        const roadmap = await Roadmap.findByPk(roadmapId);
+    if (!roadmap) {
+        throw new Error("Roadmap not found with id: " + roadmapId);
+    }
         const topics = await Topic.findAll({ where: { roadmapId } });
 
     if (!topics || topics.length === 0) {
         throw new Error("No topics found for roadmapId: " + roadmapId);
     }
-    return topics;
+    return {trackId: roadmap.entityId, topics};
 }catch (error) {
     console.error("Error fetching topics by roadmapId:", error);
     throw error;
