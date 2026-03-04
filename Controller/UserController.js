@@ -590,7 +590,7 @@ router.get("/Quiz/:id", verifyToken, authorize("user"), async (req, res, next) =
 });
 
 
-router.get("/QuizByEntity", verifyToken, authorize("user"), async (req, res, next) => {
+router.get("/QuizByEntity", async (req, res, next) => {
     try {
         const { type, id } = req.query; 
         const quizzes = await UserServices.getQuizzesByEntity(type, id);

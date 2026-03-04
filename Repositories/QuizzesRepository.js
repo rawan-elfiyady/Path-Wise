@@ -1,4 +1,4 @@
-const { Quiz, Question } = require("../models");
+const { Quiz, Question, Choice } = require("../models");
 const { Op } = require("sequelize");
 
 // CREATE
@@ -84,6 +84,11 @@ async function getQuizzesByEntity(entityType, entityId) {
                 {
                     model: Question,
                     as: "questions"
+                    ,
+                    include: [
+                        { model: Choice,
+                            as: "choices" }
+                    ]
                 }
             ]
         });
