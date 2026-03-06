@@ -308,7 +308,7 @@ async function getQuizByName(name) {
 
 async function submitQuiz(data) {
     try {
-        return await QuizGradeAnswerRepo.attendQuiz(data);
+        return await QuizGradeAnswerRepo.submitQuiz(data);
     } catch (error) {
         throw new Error(error.message);
     }

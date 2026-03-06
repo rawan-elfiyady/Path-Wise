@@ -95,7 +95,7 @@ async function checkIfUserCanAttendQuiz(quizId, userId) {
                 if (!topicProgress) {
                     return { error: "User has not started the topic for this quiz." };
                 }
-            }
+            }  
             
             const existingQuiz = await QuizGrade.findOne({
                 where: {
@@ -250,6 +250,8 @@ async function changeToicProgressStatus(userId, topicId, status) {
         const totalGrade = await calcGrade(quizGrade.quizId, quizGrade.id, data.answers, "improve");
         if(totalGrade < quizGrade.Quiz.grade / 2){
             quizGrade.status = "Failed";
+            quizGrade.grade = totalGrade;
+            await quizGrade.save();
             const finalQuizGradeWithoutAnswers = await QuizGrade.findByPk(quizGrade.id, {
                     include: [
                         {
@@ -271,6 +273,8 @@ async function changeToicProgressStatus(userId, topicId, status) {
         }
         else{
             quizGrade.status = "Passed";
+            quizGrade.grade = totalGrade;
+            await quizGrade.save();
             await changeToicProgressStatus(quizGrade.userId, quizGrade.Quiz.entityId, "Done");
         }
         quizGrade.grade = totalGrade;
@@ -298,6 +302,38 @@ async function changeToicProgressStatus(userId, topicId, status) {
     }
  }
 
+ async function submitQuiz(data){
+    try{
+        const quiz = await Quiz.findByPk(data.quizId);
+    if (!quiz) {
+        return { error: "Quiz not found." };
+    }
+
+    const user = await db.User.findByPk(data.userId);
+    if (!user) {
+        return { error: "User not found." };
+    }
+
+    const quizGrade = await QuizGrade.findOne({
+        where: {
+            quizId: data.quizId,
+            userId: data.userId,
+        },
+    });
+
+    if (!quizGrade) {
+        const quizResult = await attendQuiz(data);
+        return quizResult;
+    }
+        else {
+            const quizResult = await improveQuizGrade(quizGrade.id, data);
+            return quizResult;
+         }
+    
+    }catch (error) {
+    throw new Error(error.message);
+    }
+ }
  async function getQuizGradeById(id) {
     try {
         const quizGrade = await QuizGrade.findByPk(id, {
@@ -352,6 +388,7 @@ async function changeToicProgressStatus(userId, topicId, status) {
     module.exports = {
         attendQuiz,
         improveQuizGrade,
+        submitQuiz,
         getQuizGradeById,
         getQuizGradesByUserId,
         };
