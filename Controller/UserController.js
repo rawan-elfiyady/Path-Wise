@@ -199,8 +199,8 @@ router.put("/TopicProgress/:topicId", verifyToken, authorize("user"), async (req
         const topicId = req.params.topicId;
         const userId = req.user.id;
         const { status } = req.body;    
-        await UserServices.changeToicProgressStatus(userId, topicId, status);
-        res.status(200).json({ message: "Topic progress status updated successfully" });
+        const topicProgress = await UserServices.changeToicProgressStatus(userId, topicId, status);
+        res.status(200).json({ message: "Topic progress status updated successfully",data: topicProgress });
     } catch (err) {
         next(err);
     }

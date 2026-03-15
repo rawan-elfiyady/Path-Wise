@@ -15,6 +15,7 @@ async function changeToicProgressStatus(userId, topicId, newStatus) {
         }
         topicProgress.status = newStatus;
         await topicProgress.save();
+        return topicProgress;
     } catch (error) {
         throw new Error(error.message);
     }
