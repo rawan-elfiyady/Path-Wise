@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         userId: {                 
             type: DataTypes.INTEGER,
             allowNull: false,
+            field: "UserId",
         },
         topicId: {                
             type: DataTypes.INTEGER,

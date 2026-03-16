@@ -744,7 +744,7 @@ router.put("/user/:id", verifyToken, authorize("user"), async (req, res, next) =
 //-----------------------------------UserContribution-------------------------------//
 
 
-router.post("/contribution", verifyToken, authorize("user"), async (req, res, next) => {
+router.post("/contribution",  async (req, res, next) => {
     try {
 
         const { name, link, userId,topicId } = req.body;

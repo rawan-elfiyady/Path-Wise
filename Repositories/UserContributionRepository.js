@@ -4,9 +4,11 @@ const { Op } = require("sequelize");
 
 async function createUserContribution(data) {
     try {
+        console.log("Creating contribution with data:", data);
         return await UserContribution.create({
             name: data.name,
             link: data.link,
+            UserId: data.userId,
             userId: data.userId,
             topicId: data.topicId || null,
             requestStatus: data.requestStatus || "Pending",
