@@ -206,6 +206,18 @@ router.put("/TopicProgress/:topicId", verifyToken, authorize("user"), async (req
     }
 });
 
+router.get("/TopicProgress/:topicId", verifyToken, authorize("user"), async (req, res, next) => {
+    try {
+        const topicId = req.params.topicId; 
+        const userId = req.user.id;
+        const topicProgress = await UserServices.getTopicProgressByUserId(userId, topicId);
+        res.status(200).json(topicProgress);
+    }
+    catch (err) {
+        next(err);
+    }
+});
+
 
 ////////////////////////////////SavedSkills////////////////////////////
 

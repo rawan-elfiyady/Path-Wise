@@ -131,6 +131,14 @@ async function changeToicProgressStatus(userId, topicId, newStatus) {
     }
 }
 
+async function getTopicProgressByUserId(userId, topicId) {
+    try {
+        return await TopicProgressRepo.getTopicProgressByUserId(userId, topicId);
+    } catch (error) {
+        throw new Error(`Error fetching topic progress: ${error.message}`);
+    }
+}
+
 
 
 ////////////////////////////////SavedSkills//////////////////////////////////
@@ -444,6 +452,7 @@ module.exports = {
     updateSavedRoadmap,
     deleteSavedRoadmap,
     changeToicProgressStatus,
+    getTopicProgressByUserId,
     createSevedSkill,
     getUserSavedSkills,
     getSavedSkillById,

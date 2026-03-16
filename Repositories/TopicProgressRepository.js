@@ -21,6 +21,24 @@ async function changeToicProgressStatus(userId, topicId, newStatus) {
     }
 }
 
+async function getTopicProgressByUserId(userId, topicId) {
+    try {
+        const topicProgress = await TopicProgress.findOne({
+            where: {
+                userId,
+                topicId
+            }
+        });
+        if (!topicProgress) {
+            throw new Error("TopicProgress not found");
+        }
+        return topicProgress;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 module.exports = {
-    changeToicProgressStatus
+    changeToicProgressStatus,
+    getTopicProgressByUserId
 };
