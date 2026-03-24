@@ -174,7 +174,7 @@ router.delete("/roadmap/:id", verifyToken, authorize("admin"), async (req, res, 
 /////////////////////////////////Tracks/////////////////////////////////////
 
 
-router.post("/createTrack", verifyToken, authorize("admin"), async (req, res, next) => {
+router.post("/createTrack",  async (req, res, next) => {
     try {
         const data = req.body;
         const track = await AdminServices.createTrack(data);

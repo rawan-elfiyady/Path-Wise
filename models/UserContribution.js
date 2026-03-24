@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
     const UserContribution = sequelize.define("UserContribution", {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true,
+        },
         requestStatus: {
             type: DataTypes.ENUM("Pending", "Approved", "Rejected"),
             defaultValue: "Pending",
