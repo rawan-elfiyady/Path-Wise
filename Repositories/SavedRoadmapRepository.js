@@ -76,6 +76,11 @@ async function getUserSavedRoadmaps(userId) {
             {
                 model: TopicProgress,
                 as: "topics"
+            },
+            {
+                model: db.Roadmap,
+                as: "roadmap",
+                attributes: ["id", "name"]
             }
         ]
     });

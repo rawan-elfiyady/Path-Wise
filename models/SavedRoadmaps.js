@@ -20,6 +20,16 @@ module.exports = (sequelzie, DataTypes) => {
             as: "topics",
             onDelete: "CASCADE",
         });
+        SavedRoadmap.belongsTo(models.User, {
+            foreignKey: "userId",
+            as: "user",
+            onDelete: "CASCADE",
+        });
+        SavedRoadmap.belongsTo(models.Roadmap, {
+            foreignKey: "roadmapId",
+            as: "roadmap",
+            onDelete: "CASCADE",
+        });
     };
 
     return SavedRoadmap;

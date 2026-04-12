@@ -113,7 +113,7 @@ router.post("/SaveRoadmap", verifyToken, authorize("user"), async (req, res, nex
 
 
 // GET USER SAVED ROADMAPS
-router.get("/SavedRoadmaps/:id", verifyToken, authorize("user"), async (req, res, next) => {
+router.get("/SavedRoadmaps/:id",  async (req, res, next) => {
     try {
 
         const id = req.params.id;
