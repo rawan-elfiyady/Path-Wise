@@ -323,7 +323,7 @@ router.get("/Tracks", verifyToken, authorize("user"), async (req, res, next) => 
     }
 });
 
-router.get("/trackDetails", verifyToken, authorize("user"), async (req, res, next) => {
+router.get("/trackDetails",  async (req, res, next) => {
     try {
         const { trackName, regionName } = req.body;
         const details = await UserServices.showTrackDetails(trackName, regionName);
@@ -507,7 +507,7 @@ router.get("/Regions", verifyToken, authorize("user"), async (req, res, next) =>
     }
 });
 
-router.get("/tracksStatistics", verifyToken, authorize("user"), async (req, res, next) => {
+router.post("/tracksStatistics",  async (req, res, next) => {
     try {
         const data = req.body;
         const statistics = await UserServices.getStatisticsForTracks(data.regionName, data.trackNames);
